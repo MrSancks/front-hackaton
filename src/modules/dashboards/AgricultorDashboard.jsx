@@ -13,10 +13,10 @@ const AgricultorDashboard = () => {
   const [error, setError] = useState('');
   const [userInfo, setUserInfo] = useState(null);  // Estado para guardar los datos de userInfo
   const navigate = useNavigate();
-
+  console.log("hola")
   useEffect(() => {
     AOS.init({ duration: 1000 });
-
+    
     const headers = { 'Content-Type': 'application/json' };
 
     // Recuperar los datos de la cookie

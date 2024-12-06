@@ -17,10 +17,11 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+    console.log("hola")
     try {
       // Enviar la solicitud al backend
       const response = await axios.post(
+        
         'http://localhost:3000/auth/login',
         { email, password },
         {

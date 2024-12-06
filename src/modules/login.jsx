@@ -22,7 +22,7 @@ const Login = () => {
       // Enviar la solicitud al backend
       const response = await axios.post(
         
-        'http://localhost:3000/auth/login',
+        'https://hackaton-back-production.up.railway.app/auth/login',
         { email, password },
         {
           headers: {

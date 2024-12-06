@@ -29,7 +29,7 @@ const AgricultorDashboard = () => {
 
     const fetchData = async () => {
       try {
-        const baseURL = 'http://localhost:3000';
+        const baseURL = 'https://hackaton-back-production.up.railway.app';
 
         // Obtener empresas
         const companyResponse = await axios.get(`${baseURL}/companies`, {

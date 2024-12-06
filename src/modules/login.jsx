@@ -1,25 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Importar jwt-decode
+import Cookies from 'js-cookie'; // Importar js-cookie
+import backgroundImage from '../2148579758.webp'; // Ruta de la imagen
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-
-  // Función para obtener datos del usuario desde el localStorage
-  const getUser = () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
-  };
 
   // Función para verificar si el usuario está autenticado
   const isAuthenticated = () => {
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('token');
     if (!token) return false;
 
     try {
@@ -30,6 +25,13 @@ const Login = () => {
     }
   };
 
+  // Redirigir si ya está autenticado
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/dashboard'); // Si ya está autenticado, redirige al dashboard
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -38,6 +40,7 @@ const Login = () => {
     const userData = { email, password };
 
     try {
+      // Realizar la solicitud de login
       const response = await axios.post(
         'https://hackaton-back-production.up.railway.app/auth/login',
         userData,
@@ -45,31 +48,34 @@ const Login = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          withCredentials: true, // Habilitar el manejo de cookies
         }
       );
 
-      const { token } = response.data;
+      // El backend debería colocar el token en una cookie automáticamente
+      const token = response.data.token;
 
-      // Guardamos el token en localStorage
-      localStorage.setItem('token', token);
+      // Guardamos el token en una cookie
+      Cookies.set('token', token, {
+        expires: 7,
+        path: '/', // La cookie será accesible en todo el dominio
+        secure: process.env.NODE_ENV === 'production', // Usar secure solo en producción
+        sameSite: 'Strict', // Solo se enviará en solicitudes del mismo origen
+      });
 
       // Decodificamos el token para extraer los datos del usuario
       const decodedToken = jwtDecode(token);
 
-      // Guardamos los datos del usuario en localStorage
-      localStorage.setItem('user', JSON.stringify(decodedToken));
+      // Guardamos los datos del usuario en una cookie
+      Cookies.set('user', JSON.stringify(decodedToken), {
+        expires: 7,
+        path: '/', // La cookie será accesible en todo el dominio
+        secure: process.env.NODE_ENV === 'production', // Usar secure solo en producción
+        sameSite: 'Strict', // Solo se enviará en solicitudes del mismo origen
+      });
 
-      // Verificamos el rol del usuario
-      const userRole = decodedToken.role; // Asegúrate de que el token contenga un campo 'role'
-
-      // Redirigir dependiendo del rol
-      if (userRole === 'admin') {
-        navigate('/admin-dashboard'); // Redirige al dashboard del admin
-      } else if (userRole === 'user') {
-        navigate('/user-dashboard'); // Redirige al dashboard del usuario
-      } else {
-        navigate('/dashboard'); // Redirige a un dashboard por defecto
-      }
+      // Redirigimos al dashboard
+      navigate('/dashboard'); // Un único dashboard para todos los usuarios
 
     } catch (error) {
       if (error.response) {
@@ -85,7 +91,7 @@ const Login = () => {
   return (
     <div
       className="relative w-full h-screen bg-cover bg-center"
-      style={{ backgroundImage: 'url(/path/to/your/image.jpg)' }}
+      style={{ backgroundImage: `url(${backgroundImage})` }} // Fondo dinámico
     >
       <div className="absolute inset-0 bg-white opacity-30 backdrop-blur-lg"></div>
       <div className="absolute inset-0 flex justify-center items-center">

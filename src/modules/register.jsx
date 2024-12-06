@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Importamos useNavigate
 import { Link } from 'react-router-dom'; // Importamos Link
+import backgroundImage from '../2148579758.webp';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -58,7 +59,7 @@ const Register = () => {
   };
 
   return (
-    <div className="relative w-full h-screen bg-cover bg-center" style={{ backgroundImage: 'url(/path/to/your/image.jpg)' }}>
+    <div className="relative w-full h-screen bg-cover bg-center" style={{ backgroundImage: `url(${backgroundImage})` }}>
       <div className="absolute inset-0 bg-white opacity-30 backdrop-blur-lg"></div>
       <div className="absolute inset-0 flex justify-center items-center p-4">
         <div className="max-w-sm w-full bg-white p-6 border rounded-lg shadow-lg">

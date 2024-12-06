@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Importar js-cookie
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import {RegistrationForm} from "../pages/savePeasant"
 
 const AgricultorDashboard = () => {
   const [companies, setCompanies] = useState([]);
@@ -12,14 +13,14 @@ const AgricultorDashboard = () => {
   const [error, setError] = useState('');
   const [userInfo, setUserInfo] = useState(null);  // Estado para guardar los datos de userInfo
   const navigate = useNavigate();
-
+  console.log("hola")
   useEffect(() => {
     AOS.init({ duration: 1000 });
-
+    
     const headers = { 'Content-Type': 'application/json' };
 
     // Recuperar los datos de la cookie
-    const userInfoCookie = Cookies.get('userInfo');
+    const userInfoCookie = Cookies.get('session');
     if (!userInfoCookie) {
       navigate('/login'); // Si no está autenticado, redirige a Login
     } else {
@@ -28,7 +29,7 @@ const AgricultorDashboard = () => {
 
     const fetchData = async () => {
       try {
-        const baseURL = 'https://hackaton-back-production.up.railway.app';
+        const baseURL = 'http://localhost:3000';
 
         // Obtener empresas
         const companyResponse = await axios.get(`${baseURL}/companies`, {
@@ -52,13 +53,13 @@ const AgricultorDashboard = () => {
     fetchData();
   }, [navigate]);
 
-  const sessionCookie = Cookies.get('token');
-  console.log('Contenido de la cookie session:', sessionCookie);
+  const sessionCookie = Cookies.get('session');
+  console.log('Contenido de la cookie session 1:', sessionCookie);
 
   return (
     <div className="container mx-auto p-6 mt-12">
       <h1 className="text-4xl font-bold text-center text-gray-800 mb-8" data-aos="fade-up">Dashboard Agricultor</h1>
-
+      <RegistrationForm></RegistrationForm>
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
       {/* Mostrar los datos de userInfo */}

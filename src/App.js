@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css"; // Importa los estilos de AOS
@@ -10,9 +10,23 @@ import Register from "./modules/register";
 import HomePage from "./modules/homePage";
 import Header from "./modules/elements/Header";
 import Footer from "./modules/elements/Footer";
+import Cookies from "js-cookie";
+import ChatWidget from "./modules/ChatWidget";
 
 const App = () => {
-  // Inicializamos AOS al cargar la aplicación
+    const [hasSession, setHasSession] = useState(false);
+
+    useEffect(() => {
+        const sessionCookie = Cookies.get('session');
+        if (sessionCookie) {
+            setHasSession(true);
+        } else {
+            setHasSession(false);
+            sessionStorage.removeItem('chatHistory');
+        }
+    }, []);
+
+    // Inicializamos AOS al cargar la aplicación
   useEffect(() => {
     AOS.init({
       duration: 1000, // Duración en ms de las animaciones
@@ -57,6 +71,8 @@ const App = () => {
         {/* Rutas exclusivas como Dashboard */}
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
+        {<ChatWidget />}
+
     </Router>
   );
 };

@@ -41,7 +41,10 @@ const ChatWidget = () => {
         try {
             const response = await axios.post(
                 'https://hackaton-back-production.up.railway.app/chat',
-                { message: inputMessage },
+                {
+                    message: inputMessage,
+                    context: messages.length > 0 ? messages : undefined, // Enviar historial si existe
+                },
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -79,7 +82,7 @@ const ChatWidget = () => {
             <div className="fixed bottom-5 right-5 z-[9999]">
                 <button
                     onClick={handleToggle}
-                    className="bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full p-4 shadow-lg focus:outline-none transition"
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-4 shadow-lg focus:outline-none transition"
                 >
                     {isOpen ? <XMarkIcon className="h-6 w-6" /> : <ChatBubbleLeftIcon className="h-6 w-6" />}
                 </button>
@@ -89,7 +92,7 @@ const ChatWidget = () => {
             {isOpen && (
                 <div className="fixed bottom-20 right-5 w-96 h-[500px] bg-white rounded-lg shadow-xl flex flex-col z-[9999] border border-gray-200 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-t-lg shadow">
+                    <div className="bg-blue-500 text-white py-3 px-4 rounded-t-lg shadow">
                         <h4 className="text-lg font-semibold">Asistente Virtual</h4>
                     </div>
 
@@ -125,10 +128,10 @@ const ChatWidget = () => {
 
                         {/* Loading Dots */}
                         {isTyping && (
-                            <div className="max-w-[80%] rounded-lg p-3 text-sm bg-gray-100 mr-auto text-left shadow-sm flex space-x-1">
-                                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce delay-150"></div>
-                                <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce delay-300"></div>
+                            <div className="flex items-center space-x-2 mt-4">
+                                <div className="h-3 w-3 bg-blue-500 rounded-full animate-bounce"></div>
+                                <div className="h-3 w-3 bg-blue-500 rounded-full animate-bounce delay-150"></div>
+                                <div className="h-3 w-3 bg-blue-500 rounded-full animate-bounce delay-300"></div>
                             </div>
                         )}
 
@@ -140,7 +143,7 @@ const ChatWidget = () => {
                     {showScrollButton && (
                         <button
                             onClick={scrollToBottom}
-                            className="absolute bottom-20 right-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-lg focus:outline-none transition"
+                            className="absolute bottom-20 right-4 bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 shadow-lg focus:outline-none transition"
                         >
                             <ChevronDownIcon className="h-6 w-6" />
                         </button>
@@ -158,9 +161,9 @@ const ChatWidget = () => {
                         />
                         <button
                             onClick={handleSendMessage}
-                            className="bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-r-full px-4 py-2 shadow-sm flex items-center justify-center"
+                            className="bg-blue-500 hover:bg-blue-600 text-white rounded-r-full px-4 py-2 shadow-sm flex items-center justify-center"
                         >
-                            <PaperAirplaneIcon className="h-5 w-5 transform rotate-90" />
+                            <PaperAirplaneIcon className="h-5 w-5 transform" />
                         </button>
                     </div>
                 </div>

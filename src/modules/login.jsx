@@ -1,3 +1,4 @@
+// src/pages/Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +37,10 @@ const Login = () => {
       if (response.data && response.data.userInfo) {
         const userRole = response.data.userInfo.role;
 
+        // Guardar la información del usuario (por ejemplo, userInfo y token) en una cookie
+        Cookies.set('userInfo', JSON.stringify(response.data.userInfo));
+        Cookies.set('token', response.data.token);
+
         // Redirigir al Dashboard según el rol
         switch (userRole) {
           case 'administrador':
@@ -57,10 +62,6 @@ const Login = () => {
       } else {
         setError('No se pudo obtener el rol del usuario.');
       }
-
-      // Mostrar el contenido de la cookie 'session' en la consola
-      const sessionCookie = Cookies.get('session');  // Leer la cookie 'session'
-      console.log('Contenido de la cookie session:', sessionCookie);  // Mostrarla en la consola
 
     } catch (err) {
       console.error('Error de autenticación:', err);

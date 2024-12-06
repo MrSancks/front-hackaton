@@ -28,7 +28,7 @@ const Dashboard = () => {
 
     fetchData();
   }, [navigate]);
-  const sessionCookie = Cookies.get('session');  // Leer la cookie 'session'
+  const sessionCookie = Cookies.get('token');  // Leer la cookie 'session'
   console.log('Contenido de la cookie session:', sessionCookie);
 
   return (

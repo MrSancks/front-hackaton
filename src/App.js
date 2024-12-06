@@ -10,7 +10,7 @@ import Register from "./modules/register";
 import HomePage from "./modules/homePage";
 import Header from "./modules/elements/Header";
 import Footer from "./modules/elements/Footer";
-
+import ProveedorDashboard from "./modules/dashboards/ProveedorDashboard"
 const App = () => {
   // Inicializamos AOS al cargar la aplicación
   useEffect(() => {
@@ -30,6 +30,16 @@ const App = () => {
             <>
               <Header />
               <HomePage />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/proveedor-dashboard"
+          element={
+            <>
+              <Header />
+              <ProveedorDashboard />
               <Footer />
             </>
           }

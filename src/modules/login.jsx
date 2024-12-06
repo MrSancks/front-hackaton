@@ -1,87 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Importar jwt-decode
-import Cookies from 'js-cookie'; // Importar js-cookie
-import backgroundImage from '../2148579758.webp'; // Ruta de la imagen
+import backgroundImage from '../2148579758.webp'; // Ruta de la imagen de fondo
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate();  // Hook para redirigir
 
-  // Función para verificar si el usuario está autenticado
-  const isAuthenticated = () => {
-    const token = Cookies.get('token');
-    if (!token) return false;
-
-    try {
-      const { exp } = jwtDecode(token);
-      return exp * 1000 > Date.now(); // Verifica si el token no ha expirado
-    } catch (error) {
-      return false;
-    }
-  };
-
-  // Redirigir si ya está autenticado
-  useEffect(() => {
-    if (isAuthenticated()) {
-      navigate('/dashboard'); // Si ya está autenticado, redirige al dashboard
-    }
-  }, [navigate]);
-
+  // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    const userData = { email, password };
-
     try {
-      // Realizar la solicitud de login
+      // Enviar la solicitud al backend
       const response = await axios.post(
         'https://hackaton-back-production.up.railway.app/auth/login',
-        userData,
+        { email, password },
         {
           headers: {
             'Content-Type': 'application/json',
           },
-          withCredentials: true, // Habilitar el manejo de cookies
+          withCredentials: true, // Si necesitas que el backend envíe la cookie
         }
       );
 
-      // El backend debería colocar el token en una cookie automáticamente
-      const token = response.data.token;
+      console.log('Respuesta del servidor:', response.data); // Verifica la respuesta del servidor
 
-      // Guardamos el token en una cookie
-      Cookies.set('token', token, {
-        expires: 7,
-        path: '/', // La cookie será accesible en todo el dominio
-        secure: process.env.NODE_ENV === 'production', // Usar secure solo en producción
-        sameSite: 'Strict', // Solo se enviará en solicitudes del mismo origen
-      });
-
-      // Decodificamos el token para extraer los datos del usuario
-      const decodedToken = jwtDecode(token);
-
-      // Guardamos los datos del usuario en una cookie
-      Cookies.set('user', JSON.stringify(decodedToken), {
-        expires: 7,
-        path: '/', // La cookie será accesible en todo el dominio
-        secure: process.env.NODE_ENV === 'production', // Usar secure solo en producción
-        sameSite: 'Strict', // Solo se enviará en solicitudes del mismo origen
-      });
-
-      // Redirigimos al dashboard
-      navigate('/dashboard'); // Un único dashboard para todos los usuarios
-
-    } catch (error) {
-      if (error.response) {
-        setError(error.response.data.message || 'Ocurrió un error al iniciar sesión');
+      // Redirigir al Dashboard
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Error de autenticación:', err);
+      if (err.response) {
+        setError(err.response.data.message || 'Error al iniciar sesión.');
       } else {
-        setError('Error de red: ' + error.message);
+        setError('Error de red: ' + err.message);
       }
     } finally {
       setLoading(false);
@@ -91,7 +48,7 @@ const Login = () => {
   return (
     <div
       className="relative w-full h-screen bg-cover bg-center"
-      style={{ backgroundImage: `url(${backgroundImage})` }} // Fondo dinámico
+      style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="absolute inset-0 bg-white opacity-30 backdrop-blur-lg"></div>
       <div className="absolute inset-0 flex justify-center items-center">
@@ -122,9 +79,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 mt-4 text-white font-semibold rounded-md ${
-                loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-              }`}
+              className={`w-full py-2 mt-4 text-white font-semibold rounded-md ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
               {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </button>

@@ -1,147 +1,122 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Importamos useNavigate
-import { Link } from 'react-router-dom'; // Importamos Link
-import backgroundImage from '../2148579758.webp';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie'; // Import js-cookie
 
-const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('');
+const Dashboard = () => {
+  const [companies, setCompanies] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [peasants, setPeasants] = useState([]);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const navigate = useNavigate(); // Creamos la instancia de useNavigate
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    // Verificar si la sesión es válida y obtener los datos del usuario
+    const checkSession = async () => {
+      try {
+        const sessionResponse = await axios.get('https://hackaton-back-production.up.railway.app/auth/verify', {
+          withCredentials: true, // Esto enviará las cookies de sesión con la solicitud
+        });
+        console.log('Sesión verificada:', sessionResponse.data);
 
-    // Verificación simple para las contraseñas
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
+        // Si la sesión es válida, obtenemos el rol del usuario (o lo extraemos del backend si es necesario)
+        const userRole = sessionResponse.data.role; // Suponiendo que el backend devuelve el rol
+        console.log('Rol del usuario:', userRole);
 
-    setError('');
-    setLoading(true);
+        if (!userRole) {
+          navigate('/login'); // Redirige al login si el rol no está presente
+          return;
+        }
 
-    const userData = {
-      name,
-      email,
-      password,
-      confirmPassword,
-      role,
+        // Dependiendo del rol, realizamos las solicitudes correspondientes
+        const fetchData = async () => {
+          try {
+            if (userRole === 'agricultor') {
+              const companyResponse = await axios.get('https://hackaton-back-production.up.railway.app/companies', {
+                withCredentials: true,
+              });
+              const supplierResponse = await axios.get('https://hackaton-back-production.up.railway.app/suppliers', {
+                withCredentials: true,
+              });
+              setCompanies(companyResponse.data.data);
+              setSuppliers(supplierResponse.data.data);
+            } else if (userRole === 'empresa_turistica') {
+              const supplierResponse = await axios.get('https://hackaton-back-production.up.railway.app/suppliers', {
+                withCredentials: true,
+              });
+              const peasantResponse = await axios.get('https://hackaton-back-production.up.railway.app/peasants', {
+                withCredentials: true,
+              });
+              setSuppliers(supplierResponse.data.data);
+              setPeasants(peasantResponse.data.data);
+            } else if (userRole === 'proveedor') {
+              const companyResponse = await axios.get('https://hackaton-back-production.up.railway.app/companies', {
+                withCredentials: true,
+              });
+              const peasantResponse = await axios.get('https://hackaton-back-production.up.railway.app/peasants', {
+                withCredentials: true,
+              });
+              setCompanies(companyResponse.data.data);
+              setPeasants(peasantResponse.data.data);
+            } else {
+              navigate('/login'); // Si el rol no es válido, redirige al login
+            }
+          } catch (err) {
+            setError('Error al obtener los datos: ' + err.message);
+          }
+        };
+
+        fetchData();
+      } catch (err) {
+        setError('Error al verificar la sesión: ' + err.message);
+        navigate('/login');
+      }
     };
 
-    try {
-      const response = await axios.post('https://hackaton-back-production.up.railway.app/auth/register', userData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      // Si la respuesta es exitosa, redirigimos al login
-      console.log('Usuario registrado', response.data);
-      navigate('/login'); // Redirige a la página de login
-    } catch (error) {
-      if (error.response) {
-        // Si el servidor respondió con un error
-        setError(error.response.data.message || 'Ocurrió un error al registrar el usuario');
-      } else {
-        // Si no hubo respuesta del servidor (problemas de red, etc.)
-        setError('Error de red: ' + error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Verifica la sesión al cargar la página
+    checkSession();
+  }, [navigate]);
 
   return (
-    <div className="relative w-full h-screen bg-cover bg-center" style={{ backgroundImage: `url(${backgroundImage})` }}>
-      <div className="absolute inset-0 bg-white opacity-30 backdrop-blur-lg"></div>
-      <div className="absolute inset-0 flex justify-center items-center p-4">
-        <div className="max-w-sm w-full bg-white p-6 border rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold text-center mb-4">Crear cuenta</h2>
-          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nombre</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Rol</label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                required
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Selecciona un rol</option>
-                <option value="agricultor">Agricultor</option>
-                <option value="proveedor">Proveedor</option>
-                <option value="empresa_turistica">Empresa Turística</option>
-              </select>
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-2 mt-4 text-white font-semibold rounded-md ${
-                loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-              }`}
-            >
-              {loading ? 'Registrando...' : 'Crear cuenta'}
-            </button>
-          </form>
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-600">
-              ¿Ya tienes cuenta?{' '}
-              <Link to="/login" className="text-blue-600 hover:text-blue-800 font-semibold">
-                Inicia sesión
-              </Link>
-            </p>
-          </div>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-semibold mb-4">Dashboard</h1>
+      {error && <p className="text-red-500">{error}</p>}
+      
+      {/* Mostrar las empresas, proveedores, campesinos dependiendo del rol */}
+      {companies.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Empresas</h2>
+          <ul>
+            {companies.map((company) => (
+              <li key={company.id}>{company.name}</li>
+            ))}
+          </ul>
         </div>
-      </div>
+      )}
+
+      {suppliers.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Proveedores</h2>
+          <ul>
+            {suppliers.map((supplier) => (
+              <li key={supplier.id}>{supplier.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {peasants.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Campesinos</h2>
+          <ul>
+            {peasants.map((peasant) => (
+              <li key={peasant.id}>{peasant.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Register;
+export default Dashboard;

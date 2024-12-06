@@ -1,47 +1,73 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Importar para redirección
+import Cookies from "js-cookie"; // Importa js-cookie
 
 const Companias = () => {
   const [companias, setCompanias] = useState([]);  // Estado para almacenar las compañías
   const [loading, setLoading] = useState(true);  // Estado para controlar la carga
   const [error, setError] = useState(null);  // Estado para errores
+  const navigate = useNavigate();  // Hook para redirigir en caso de error de autenticación
+
+  // Verificar si el token existe y si está expirado
+  const isAuthenticated = () => {
+    const session = Cookies.get('session');
+     // Obtener la sesión completa desde las cookies
+    if (!session) return false; // Si no existe la sesión, el usuario no está autenticado
+
+    try {
+      const sessionData = JSON.parse(session); // Parsear la sesión almacenada
+      const token = sessionData.token; // Obtener el token de la sesión
+      return token ? true : false; // Verificar si hay un token
+    } catch (error) {
+      return false; // Si hubo un error al parsear la sesión, no está autenticado
+    }
+  };
 
   useEffect(() => {
+    console.log('Sesión:', session);
+    // Redirigir al login si no está autenticado
+    if (!isAuthenticated()) {
+      navigate("/login"); // Redirigir a la página de login si no está autenticado
+      return; // Salir de la función
+    }
+
     // Función para obtener las compañías desde el backend
     const fetchCompanias = async () => {
-      const token = localStorage.getItem("token"); // Obtener el token del localStorage
-
+      const session = Cookies.get('session'); // Obtener la sesión completa desde las cookies
+    
+      if (!session) {
+        setError("No se encontró sesión válida");
+        return;
+      }
+    
+      const sessionData = JSON.parse(session); // Parsear la sesión
+      const token = sessionData.token; // Obtener el token de la sesión
+    
       try {
-        const response = await fetch("https://hackaton-back-production.up.railway.app/companies", {
-          method: "GET",
+        const response = await axios.get('https://hackaton-back-production.up.railway.app/companies', {
           headers: {
-            "Authorization": `Bearer ${token}`,  // Enviar el token en el header Authorization
-            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`, // Enviar el token en el header Authorization
           },
-          credentials: "include", // Asegúrate de enviar las cookies si es necesario
+          withCredentials: true, // Asegúrate de enviar las cookies si es necesario
         });
-
-        if (!response.ok) {
-          throw new Error("Error al obtener las compañías");
-        }
-
-        const data = await response.json();  // Parsear la respuesta JSON
-        setCompanias(data);  // Establecer las compañías en el estado
+    
+        setCompanias(response.data); // Establecer las compañías en el estado
       } catch (err) {
-        setError(err.message);  // Si hay un error, guardar el mensaje en el estado
+        setError(err.message); // Si hay un error, guardar el mensaje en el estado
       } finally {
-        setLoading(false);  // Cuando termine la solicitud, marcar como carga completa
+        setLoading(false); // Cuando termine la solicitud, marcar como carga completa
       }
     };
 
     fetchCompanias();  // Llamar a la función al cargar el componente
-  }, []);  // El arreglo vacío asegura que solo se ejecute una vez al montar el componente
+  }, [navigate]);  // Dependencia en navigate para redirigir
 
   if (loading) {
     return <p>Cargando...</p>;
   }
 
   if (error) {
-    return <p>Error: {error}</p>;
+    return <p className="text-red-500">Error: {error}</p>;
   }
 
   return (

@@ -1,70 +1,78 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const Companias = () => {
-  const [companias, setCompanias] = useState([]);  // Estado para almacenar las compañías
-  const [loading, setLoading] = useState(true);  // Estado para controlar la carga
-  const [error, setError] = useState(null);  // Estado para errores
+const Dashboard = () => {
+  const [companies, setCompanies] = useState([]);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Función para obtener las compañías desde el backend
-    const fetchCompanias = async () => {
-      const token = localStorage.getItem("token"); // Obtener el token del localStorage
+    const headers = { 'Content-Type': 'application/json' };
 
+    const fetchData = async () => {
       try {
-        const response = await fetch("https://hackaton-back-production.up.railway.app/companies", {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,  // Enviar el token en el header Authorization
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Asegúrate de enviar las cookies si es necesario
+        const baseURL = 'https://hackaton-back-production.up.railway.app';
+
+        // Intentamos cargar las empresas
+        const companyResponse = await axios.get(`${baseURL}/companies`, {
+          headers,
+          withCredentials: true,
         });
 
-        if (!response.ok) {
-          throw new Error("Error al obtener las compañías");
-        }
-
-        const data = await response.json();  // Parsear la respuesta JSON
-        setCompanias(data);  // Establecer las compañías en el estado
+        setCompanies(companyResponse.data.data);
       } catch (err) {
-        setError(err.message);  // Si hay un error, guardar el mensaje en el estado
-      } finally {
-        setLoading(false);  // Cuando termine la solicitud, marcar como carga completa
+        setError('Error al obtener los datos: ' + err.message);
       }
     };
 
-    fetchCompanias();  // Llamar a la función al cargar el componente
-  }, []);  // El arreglo vacío asegura que solo se ejecute una vez al montar el componente
-
-  if (loading) {
-    return <p>Cargando...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+    fetchData();
+  }, [navigate]);
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-2xl font-semibold text-gray-800">Compañías</h3>
-      <p className="text-gray-600">Administra las compañías de tu red. Aquí puedes ver los detalles, agregar o editar.</p>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-semibold mb-4">Dashboard</h1>
       
-      {companias.length > 0 ? (
-        <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+      {/* Mostrar error si no hay sesión activa */}
+      {error && <p className="text-red-500">{error}</p>}
+      
+      {/* Mostrar las empresas si las hay */}
+      {companies.length > 0 ? (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Empresas</h2>
           <ul>
-            {companias.map((compania) => (
-              <li key={compania.id} className="mb-4">
-                <h4 className="text-xl font-semibold text-gray-700">{compania.name}</h4>
-                <p className="text-gray-500">{compania.description}</p>
+            {companies.map((company) => (
+              <li key={company._id} className="mb-4">
+                <h3 className="text-lg font-bold">{company.companyName}</h3>
+                <p><strong>NIT:</strong> {company.nit}</p>
+                <p><strong>Contacto:</strong> {company.contact}</p>
+                
+                {/* Mostrar los productos requeridos */}
+                {company.productsRequired && company.productsRequired.length > 0 ? (
+                  <div>
+                    <h4 className="text-md font-semibold mt-2">Productos Requeridos</h4>
+                    <ul>
+                      {company.productsRequired.map((product) => (
+                        <li key={product._id}>
+                          <p><strong>Producto:</strong> {product.name}</p>
+                          <p><strong>Cantidad Requerida:</strong> {product.requiredQuantity}</p>
+                          <p><strong>Fecha Estimada:</strong> {new Date(product.estimatedDate).toLocaleDateString()}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <p>No se requieren productos para esta empresa.</p>
+                )}
               </li>
             ))}
           </ul>
         </div>
       ) : (
-        <p className="text-gray-500">No hay compañías disponibles.</p>
+        <p>No se pudieron cargar los datos de empresas.</p>
       )}
     </div>
   );
 };
 
-export default Companias;
+export default Dashboard;

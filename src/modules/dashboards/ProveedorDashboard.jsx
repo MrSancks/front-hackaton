@@ -1,18 +1,26 @@
-// src/pages/AgricultorDashboard.js
+// src/pages/ProveedorDashboard.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Importar js-cookie
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import ProveedorModal from '../forms/ProveedorModal';  // Asegúrate de importar el modal
 
-const AgricultorDashboard = () => {
+const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
   const [peasants, setPeasants] = useState([]);
   const [error, setError] = useState('');
   const [userInfo, setUserInfo] = useState(null);  // Estado para guardar los datos de userInfo
+  const [showModal, setShowModal] = useState(false);  // Estado para controlar la visibilidad del modal
+  const [hasProviderData, setHasProviderData] = useState(false);  // Estado para saber si ya existe el proveedor
   const navigate = useNavigate();
 
+
+  const sessionCookie = Cookies.get('userInfo');
+ 
+
+  console.log('Contenido de la cookie session:', sessionCookie);
   useEffect(() => {
     AOS.init({ duration: 1000 });
 
@@ -23,8 +31,10 @@ const AgricultorDashboard = () => {
     if (!userInfoCookie) {
       navigate('/login'); // Si no está autenticado, redirige a Login
     } else {
-      setUserInfo(JSON.parse(userInfoCookie));  // Parsear y guardar el userInfo desde la cookie
+      const user = JSON.parse(userInfoCookie);
+      setUserInfo(user);  // Guardar el userInfo
     }
+    
 
     const fetchData = async () => {
       try {
@@ -37,12 +47,24 @@ const AgricultorDashboard = () => {
         });
         setCompanies(companyResponse.data.data);
 
-        // Obtener campesinos (En este caso, su información relevante para el agricultor)
+        // Obtener campesinos
         const peasantsResponse = await axios.get(`${baseURL}/peasants`, {
           headers,
           withCredentials: true,
         });
         setPeasants(peasantsResponse.data.data);
+
+        // Verificar si ya existe información de proveedor para el usuario actual
+        if (userInfo) {
+          const providerResponse = await axios.get(`${baseURL}/supplier/${userInfo.id}`, {
+            headers,
+            withCredentials: true,
+          });
+
+          if (providerResponse.data) {
+            setHasProviderData(true);  // Si existe, no mostrar el modal
+          }
+        }
 
       } catch (err) {
         setError('Error al obtener los datos: ' + err.message);
@@ -50,16 +72,34 @@ const AgricultorDashboard = () => {
     };
 
     fetchData();
-  }, [navigate]);
+  }, [navigate, userInfo]);
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
-  const sessionCookie = Cookies.get('token');
-  console.log('Contenido de la cookie session:', sessionCookie);
 
   return (
     <div className="container mx-auto p-6 mt-12">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8" data-aos="fade-up">Dashboard Agricultor</h1>
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8" data-aos="fade-up">Dashboard Proveedor</h1>
 
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+      {/* Mostrar el modal solo si no hay datos del proveedor */}
+      {!hasProviderData && !showModal && (
+        <button
+          onClick={handleShowModal}
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg mb-8"
+        >
+          Subir Productos
+        </button>
+      )}
+
+      {/* Mostrar Modal si está abierto y no se ha guardado proveedor */}
+      {showModal && !hasProviderData && (
+        <ProveedorModal
+          userInfo={userInfo}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
 
       {/* Mostrar los datos de userInfo */}
       {userInfo && (
@@ -126,4 +166,4 @@ const AgricultorDashboard = () => {
   );
 };
 
-export default AgricultorDashboard;
+export default ProveedorDashboard;

@@ -17,7 +17,7 @@ const Companias = () => {
     try {
       const sessionData = JSON.parse(session); // Parsear la sesión almacenada
       const token = sessionData.token; // Obtener el token de la sesión
-      return token ? true : false; // Verificar si hay un token
+      return !!token; // Verificar si hay un token
     } catch (error) {
       return false; // Si hubo un error al parsear la sesión, no está autenticado
     }

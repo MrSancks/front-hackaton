@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Cookies from 'js-cookie'
 const Dashboard = () => {
   const [companies, setCompanies] = useState([]);
   const [error, setError] = useState('');
@@ -28,6 +28,8 @@ const Dashboard = () => {
 
     fetchData();
   }, [navigate]);
+  const sessionCookie = Cookies.get('session');  // Leer la cookie 'session'
+  console.log('Contenido de la cookie session:', sessionCookie);
 
   return (
     <div className="container mx-auto p-4">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie'; // Importar js-cookie
 import backgroundImage from '../2148579758.webp'; // Ruta de la imagen de fondo
 
 const Login = () => {
@@ -31,8 +32,36 @@ const Login = () => {
 
       console.log('Respuesta del servidor:', response.data); // Verifica la respuesta del servidor
 
-      // Redirigir al Dashboard
-      navigate('/dashboard');
+      // Verifica si la respuesta tiene un campo 'userInfo' y obtiene el rol
+      if (response.data && response.data.userInfo) {
+        const userRole = response.data.userInfo.role;
+
+        // Redirigir al Dashboard según el rol
+        switch (userRole) {
+          case 'administrador':
+            navigate('/admin-dashboard');
+            break;
+          case 'agricultor':
+            navigate('/agricultor-dashboard');
+            break;
+          case 'proveedor':
+            navigate('/proveedor-dashboard');
+            break;
+          case 'empresa-turistica':
+            navigate('/empresa-turistica-dashboard');
+            break;
+          default:
+            navigate('/');  // Si no tiene rol, redirigir a la página principal o donde sea necesario
+            break;
+        }
+      } else {
+        setError('No se pudo obtener el rol del usuario.');
+      }
+
+      // Mostrar el contenido de la cookie 'session' en la consola
+      const sessionCookie = Cookies.get('session');  // Leer la cookie 'session'
+      console.log('Contenido de la cookie session:', sessionCookie);  // Mostrarla en la consola
+
     } catch (err) {
       console.error('Error de autenticación:', err);
       if (err.response) {

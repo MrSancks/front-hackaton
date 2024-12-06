@@ -21,13 +21,13 @@ const Login = () => {
     try {
       // Enviar la solicitud al backend
       const response = await axios.post(
-        'https://hackaton-back-production.up.railway.app/auth/login',
+        'http://localhost:3000/auth/login',
         { email, password },
         {
           headers: {
             'Content-Type': 'application/json',
           },
-          withCredentials: true, // Si necesitas que el backend envíe la cookie
+          withCredentials: "include", // Si necesitas que el backend envíe la cookie
         }
       );
 
@@ -38,8 +38,7 @@ const Login = () => {
         const userRole = response.data.userInfo.role;
 
         // Guardar la información del usuario (por ejemplo, userInfo y token) en una cookie
-        Cookies.set('userInfo', JSON.stringify(response.data.userInfo));
-        Cookies.set('token', response.data.token);
+       //Cookies.set('token', response.data.token);
 
         // Redirigir al Dashboard según el rol
         switch (userRole) {

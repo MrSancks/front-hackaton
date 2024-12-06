@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import Swal from "sweetalert2";
-import axios from "axios"; // Importar Axios
+import axios from "axios"; 
 
 // Configuración del ícono predeterminado de Leaflet
 const DefaultIcon = L.icon({
@@ -31,6 +31,7 @@ export const RegistrationForm = () => {
   const latitude = formData.ubication.latitude;
   const longitude = formData.ubication.longitude;
   const userId = formData.userId;
+  const token = document.cookie
 
   const handleUbicationChange = (coords) => {
     setFormData((prevData) => ({
@@ -59,12 +60,15 @@ export const RegistrationForm = () => {
     return null;
   };
 
+  //const url = "http://localhost:3000/save/peasant"
+  const url = "https://hackaton-back-production.up.railway.app/save/peasant"
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData)
     try {
       const response = await axios.post(
-        "https://hackaton-back-production.up.railway.app/save/peasant",
+        url,
         {
         ubication: {
                 latitude: parseFloat(latitude),
@@ -72,8 +76,13 @@ export const RegistrationForm = () => {
         },
         farmName: farmName,     
         products:[],
-        user: userId,
-        }
+        userId: userId,
+        },
+        {headers: {
+          Authorization: `Bearer ${token}`, // Incluye el token en el encabezado
+        },
+        withCredentials: true, // Asegúrate de enviar cookies si es necesario
+      }
       );
 
       Swal.fire({

@@ -20,16 +20,17 @@ const AgricultorDashboard = () => {
     const headers = { 'Content-Type': 'application/json' };
 
     // Recuperar los datos de la cookie
-    const userInfoCookie = Cookies.get('session');
+    const userInfoCookie = Cookies.get('token');
     if (!userInfoCookie) {
       navigate('/login'); // Si no está autenticado, redirige a Login
     } else {
-      setUserInfo(JSON.parse(userInfoCookie));  // Parsear y guardar el userInfo desde la cookie
+      //setUserInfo(JSON.parse(userInfoCookie));  // Parsear y guardar el userInfo desde la cookie
     }
 
     const fetchData = async () => {
       try {
         const baseURL = 'https://hackaton-back-production.up.railway.app';
+        //const baseURL = 'http://localhost:3000';
 
         // Obtener empresas
         const companyResponse = await axios.get(`${baseURL}/companies`, {

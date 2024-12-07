@@ -19,7 +19,7 @@ const App = () => {
     const [hasSession, setHasSession] = useState(false);
 
     useEffect(() => {
-        const sessionCookie = Cookies.get('session');
+        const sessionCookie = Cookies.get('token');
         if (sessionCookie) {
             setHasSession(true);
         } else {
@@ -38,15 +38,14 @@ const App = () => {
 
   return (
     <Router>
+        <Header />
       <Routes>
         {/* Rutas con Header y Footer */}
         <Route
           path="/"
           element={
             <>
-              <Header />
               <HomePage />
-              <Footer />
             </>
           }
         />
@@ -54,9 +53,7 @@ const App = () => {
           path="/proveedor-dashboard"
           element={
             <>
-              <Header />
               <ProveedorDashboard />
-              <Footer />
             </>
           }
         />
@@ -64,9 +61,7 @@ const App = () => {
           path="/agricultor-dashboard"
           element={
             <>
-              <Header />
               <AgricultorDashboard />
-              <Footer />
             </>
           }
         />
@@ -74,9 +69,7 @@ const App = () => {
           path="/login"
           element={
             <>
-              <Header />
               <Login />
-              <Footer />
             </>
           }
         />
@@ -84,16 +77,15 @@ const App = () => {
           path="/register"
           element={
             <>
-              <Header />
               <Register />
-              <Footer />
             </>
           }
         />
         {/* Rutas exclusivas como Dashboard */}
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
-        {<ChatWidget />}
+        { hasSession && <ChatWidget />}
+        <Footer />
 
     </Router>
   );

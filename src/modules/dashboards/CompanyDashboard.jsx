@@ -8,6 +8,9 @@ import CompanyModal from '../forms/CompanyModal';
 import ProductsDisplayPeasant from '../forms/ProductsDisplayPeasant';  // Importa el modal
 import { jwtDecode } from 'jwt-decode';
 import RequestCompany from '../forms/RequestCompany';
+import ViewRequest from '../forms/ViewRequest';
+
+
 const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -114,8 +117,8 @@ const ProveedorDashboard = () => {
             Crear Solicitud
           </li>
           <li
-            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'showsolicitud' ? 'bg-gray-300' : ''}`}
-            onClick={() => setSelectedTab('showsolicitud')}
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'showsol' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('showsol')}
           >
             Ver Solicitudes
           </li>
@@ -195,13 +198,13 @@ const ProveedorDashboard = () => {
             <div className="">
             <RequestCompany supplierId={decodetoken.id} className="pt-10"></RequestCompany>
             </div>
-          </div>
+          </div>     
         )}
-        {selectedTab === 'showsolicitud' && (
+        {selectedTab === 'showsol' && (
           <div data-aos="fade-left" className="mb-12">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
             <div className="">
-            <RequestCompany supplierId={decodetoken.id} className="pt-10"></RequestCompany>
+            <ViewRequest></ViewRequest>
             </div>
           </div>
         )}

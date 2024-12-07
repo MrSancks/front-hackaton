@@ -165,21 +165,22 @@ const ProveedorDashboard = () => {
             </div>
           </div>
         )}
+        {selectedTab === 'showsol' && (
+          <div data-aos="fade-left" className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
+            <div className="">
+            <ViewRequest></ViewRequest>
+            </div>
+          </div>
+        )}
 
         {/* Mensajes si no hay datos */}
         {selectedTab === 'proveedores' && suppliers.length === 0 && (
           <p className="text-gray-600">No se pudieron cargar los datos de proveedores.</p>
         )}
+
         {selectedTab === 'empresas' && companies.length === 0 && (
           <p className="text-gray-600">No se pudieron cargar los datos de empresas.</p>
-        )}
-        {selectedTab === 'showsol' && (
-          <div data-aos="fade-left" className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
-            <div className="">
-            <RequestCompany supplierId={decodetoken.id} className="pt-10"></RequestCompany>
-            </div>
-          </div>
         )}
       </div>
     </div>

@@ -1,27 +1,29 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
-import { ChatBubbleLeftIcon, XMarkIcon, PaperAirplaneIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+﻿import React, { useState, useEffect, useRef } from "react";
+import { ChatBubbleLeftIcon, XMarkIcon, PaperAirplaneIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import axios from "axios";
 
 const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
-    const [inputMessage, setInputMessage] = useState('');
+    const [inputMessage, setInputMessage] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const messagesEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
 
     useEffect(() => {
-        const storedHistory = sessionStorage.getItem('chatHistory');
+        // Cargar historial del chat desde sessionStorage
+        const storedHistory = sessionStorage.getItem("chatHistory");
         if (storedHistory) {
             setMessages(JSON.parse(storedHistory));
         }
     }, []);
 
     useEffect(() => {
-        sessionStorage.setItem('chatHistory', JSON.stringify(messages));
+        // Guardar historial del chat en sessionStorage
+        sessionStorage.setItem("chatHistory", JSON.stringify(messages));
         scrollToBottom(); // Auto-scroll cuando se agrega un mensaje
     }, [messages]);
 
@@ -32,40 +34,40 @@ const ChatWidget = () => {
     const handleSendMessage = async () => {
         if (!inputMessage.trim()) return;
 
-        const userMessage = { role: 'user', content: inputMessage };
+        const userMessage = { role: "user", content: inputMessage };
         const updatedMessages = [...messages, userMessage];
         setMessages(updatedMessages);
-        setInputMessage('');
+        setInputMessage("");
         setIsTyping(true); // Mostrar puntos de carga
 
         try {
             const response = await axios.post(
-                'https://hackaton-back-production.up.railway.app/chat',
+                "https://hackaton-back-production.up.railway.app/chat",
                 {
                     message: inputMessage,
                     context: messages.length > 0 ? messages : undefined, // Enviar historial si existe
                 },
                 {
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                     withCredentials: true,
                 }
             );
 
-            const botMessage = { role: 'bot', content: response.data.response.content };
-            setMessages(prev => [...prev, botMessage]);
+            const botMessage = { role: "bot", content: response.data.response.content };
+            setMessages((prev) => [...prev, botMessage]);
         } catch (error) {
-            console.error('Error al enviar el mensaje:', error);
-            const errorMessage = { role: 'bot', content: 'Lo siento, ocurrió un error al procesar tu mensaje.' };
-            setMessages(prev => [...prev, errorMessage]);
+            console.error("Error al enviar el mensaje:", error);
+            const errorMessage = { role: "bot", content: "Lo siento, ocurrió un error al procesar tu mensaje." };
+            setMessages((prev) => [...prev, errorMessage]);
         } finally {
             setIsTyping(false); // Ocultar puntos de carga
         }
     };
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     const handleScroll = () => {
@@ -105,12 +107,15 @@ const ChatWidget = () => {
                         {messages.map((msg, index) => (
                             <div
                                 key={index}
-                                className={`max-w-[80%] rounded-lg p-3 text-sm ${
-                                    msg.role === 'user'
-                                        ? 'bg-blue-100 ml-auto text-right'
-                                        : 'bg-gray-100 mr-auto text-left'
+                                className={`max-w-lg min-w-[150px] rounded-lg p-3 text-sm ${
+                                    msg.role === "user"
+                                        ? "bg-blue-100 text-gray-800 self-start"
+                                        : "bg-gray-100 text-gray-800 self-start"
                                 } shadow-sm`}
                             >
+                <span className="block text-xs font-bold text-gray-500">
+                  {msg.role === "user" ? "Usuario:" : "Asistente:"}
+                </span>
                                 <ReactMarkdown
                                     remarkPlugins={[remarkGfm]}
                                     components={{
@@ -128,10 +133,10 @@ const ChatWidget = () => {
 
                         {/* Loading Dots */}
                         {isTyping && (
-                            <div className="flex items-center space-x-2 mt-4">
-                                <div className="h-3 w-3 bg-blue-500 rounded-full animate-bounce"></div>
-                                <div className="h-3 w-3 bg-blue-500 rounded-full animate-bounce delay-150"></div>
-                                <div className="h-3 w-3 bg-blue-500 rounded-full animate-bounce delay-300"></div>
+                            <div className="flex items-center space-x-1 mt-2">
+                                <div className="h-2 w-2 bg-blue-500 rounded-full animate-bounce"></div>
+                                <div className="h-2 w-2 bg-blue-500 rounded-full animate-bounce delay-1000"></div>
+                                <div className="h-2 w-2 bg-blue-500 rounded-full animate-bounce delay-2000"></div>
                             </div>
                         )}
 
@@ -157,7 +162,7 @@ const ChatWidget = () => {
                             placeholder="Escribe un mensaje..."
                             value={inputMessage}
                             onChange={(e) => setInputMessage(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                         />
                         <button
                             onClick={handleSendMessage}

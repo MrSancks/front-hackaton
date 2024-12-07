@@ -12,6 +12,7 @@ import Header from "./modules/elements/Header";
 import Footer from "./modules/elements/Footer";
 import ProveedorDashboard from "./modules/dashboards/ProveedorDashboard";
 import AgricultorDashboard from "./modules/dashboards/AgricultorDashboard";
+import CompanyDashboard from "./modules/dashboards/CompanyDashboard";
 import Cookies from "js-cookie";
 import ChatWidget from "./modules/ChatWidget";
 
@@ -59,6 +60,7 @@ const AppRoutes = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/proveedor-dashboard" element={<ProveedorDashboard />} />
                 <Route path="/agricultor-dashboard" element={<AgricultorDashboard />} />
+                <Route path="/company-dashboard" element={< CompanyDashboard />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/dashboard" element={<Dashboard />} />

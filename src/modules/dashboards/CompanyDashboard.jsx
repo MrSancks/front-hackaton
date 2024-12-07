@@ -120,7 +120,7 @@ const ProveedorDashboard = () => {
             className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'showsol' ? 'bg-gray-300' : ''}`}
             onClick={() => setSelectedTab('showsol')}
           >
-            Ver Solicitudes
+            Lista de Ofertas
           </li>
         </ul>
       </div>

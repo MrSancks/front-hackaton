@@ -8,6 +8,7 @@ import ProveedorModal from '../forms/ProveedorModal';
 import { jwtDecode } from 'jwt-decode';
 import RequestCompany from '../forms/RequestCompany';
 import ViewRequest from '../forms/ViewRequest';
+import RequestUser from '../forms/RequestUser';
 
 const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
@@ -92,6 +93,12 @@ const ProveedorDashboard = () => {
           >
             Ver Solicitudes
           </li>
+          <li
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'showrequest' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('showrequest')}
+          >
+            Lista de Ofertas
+          </li>
         </ul>
       </div>
 
@@ -175,6 +182,15 @@ const ProveedorDashboard = () => {
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
             <div className="">
             <ViewRequest></ViewRequest>
+            </div>
+          </div>
+        )}
+
+        {selectedTab === 'showrequest' && (
+          <div data-aos="fade-left" className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
+            <div className="">
+            <RequestUser></RequestUser>
             </div>
           </div>
         )}

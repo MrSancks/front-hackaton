@@ -2,53 +2,88 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import Cookies from "js-cookie";
 import axios from "axios";
 import logoMetAgro from "../../logoMetAgroCiruclo.png";
 
 const Header = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Detectar cambios en la ubicación
+  const location = useLocation();
   const [hasSession, setHasSession] = useState(false);
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    // Inicializa AOS
     AOS.init({
-      duration: 1000, // Duración de la animación
-      once: true, // Se activa solo una vez
+      duration: 1000,
+      once: true,
     });
   }, []);
 
-  // Verificar sesión al cargar la página o cambiar de ruta
+  // Verificar sesión y obtener rol del usuario
   useEffect(() => {
-    const sessionCookie = Cookies.get("token");
-    console.log("Contenido de la cookie session:", sessionCookie);
-    setHasSession(!!sessionCookie); // Actualiza hasSession según si existe la cookie
-  }, [location]); // Ejecutar cada vez que cambie la ubicación
+    const cookieString = document.cookie; // Obtener todas las cookies
+    const cookies = Object.fromEntries(
+        cookieString.split("; ").map((c) => c.split("="))
+    );
+
+    const token = cookies.token; // Extraer el token
+    const userInfo = cookies.userInfo
+        ? JSON.parse(decodeURIComponent(cookies.userInfo))
+        : null;
+
+    setHasSession(!!token);
+    if (userInfo) setUserRole(userInfo.role);
+  }, [location]);
 
   const handleLogout = async () => {
     try {
-      // Realizar la petición de logout
       await axios.post(
           "https://hackaton-back-production.up.railway.app/auth/logout",
           {},
           {
             headers: {
-              Authorization: `Bearer ${Cookies.get("token")}`, // Enviar el token en el header Authorization
+              Authorization: `Bearer ${document.cookie
+                  .split("; ")
+                  .find((row) => row.startsWith("token="))
+                  ?.split("=")[1]}`,
             },
-            withCredentials: true, // Asegúrate de enviar las cookies si es necesario
+            withCredentials: true,
           }
       );
 
-      // Eliminar cookie y limpiar el almacenamiento
-      Cookies.remove("token");
+      document.cookie =
+          "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie =
+          "userInfo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       sessionStorage.removeItem("chatHistory");
 
-      // Redirigir al usuario a la página principal
       setHasSession(false);
+      setUserRole("");
       navigate("/");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
+    }
+  };
+
+  const handleLogoClick = () => {
+    if (hasSession) {
+      switch (userRole) {
+        case "administrador":
+          navigate("/dashboard");
+          break;
+        case "agricultor":
+          navigate("/agricultor-dashboard");
+          break;
+        case "proveedor":
+          navigate("/proveedor-dashboard");
+          break;
+        case "empresa turistica":
+          navigate("/company-dashboard");
+          break;
+        default:
+          navigate("/");
+      }
+    } else {
+      navigate("/");
     }
   };
 
@@ -58,17 +93,22 @@ const Header = () => {
           data-aos="fade-down"
       >
         {/* Logo */}
-        <img
-            src={logoMetAgro}
-            alt="Logo"
-            className="h-12 cursor-pointer"
-            onClick={() => navigate("/")}
-        />
+        <div className="flex items-center space-x-4">
+          <img
+              src={logoMetAgro}
+              alt="Logo"
+              className="h-12 cursor-pointer"
+              onClick={handleLogoClick}
+          />
+          <h1 className="text-2xl font-bold">
+            <span className="text-green-600">Met</span>
+            <span className="text-blue-600">Agro</span>
+          </h1>
+        </div>
 
         {/* Botones */}
         <div className="flex space-x-4">
           {hasSession ? (
-              // Mostrar botón de logout si hay sesión
               <button
                   className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300"
                   onClick={handleLogout}
@@ -76,7 +116,6 @@ const Header = () => {
                 Logout
               </button>
           ) : (
-              // Mostrar botones de login y registro si no hay sesión
               <>
                 <button
                     className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"

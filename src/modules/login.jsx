@@ -4,9 +4,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Importar js-cookie
 import backgroundImage from '../2148579758.webp'; // Ruta de la imagen de fondo
-import userEvent from '@testing-library/user-event';
 
 const Login = () => {
+  //const entorno = "http://localhost:3000/auth/login";
+  const entorno = "https://hackaton-back-production.up.railway.app/auth/login";
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,13 +23,14 @@ const Login = () => {
     try {
       // Enviar la solicitud al backend
       const response = await axios.post(
-        'https://hackaton-back-production.up.railway.app/auth/login',
+
+        entorno,
         { email, password },
         {
           headers: {
             'Content-Type': 'application/json',
           },
-          withCredentials: true, // Si necesitas que el backend envíe la cookie
+          withCredentials: "include", // Si necesitas que el backend envíe la cookie
         }
       );
 
@@ -39,8 +41,9 @@ const Login = () => {
         const userRole = response.data.userInfo.role;
 
         // Guardar la información del usuario (por ejemplo, userInfo y token) en una cookie
-        Cookies.set('userInfo', JSON.stringify(response.data.userInfo));
-        Cookies.set('token', response.data.token);
+        
+       Cookies.set('token', response.data.token);
+       console.log("seteo correcto")
 
         // Redirigir al Dashboard según el rol
         switch (userRole) {

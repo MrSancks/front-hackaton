@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import Swal from "sweetalert2";
-import axios from "axios"; // Importar Axios
-
+import axios from "axios";
+import "leaflet/dist/leaflet.css"; // Asegúrate de incluir los estilos de Leaflet
+import { jwtDecode } from "jwt-decode";
 // Configuración del ícono predeterminado de Leaflet
 const DefaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
@@ -17,6 +18,8 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 export const RegistrationForm = () => {
+  const token = document.cookie;
+  const decodetoken= jwtDecode(token);
   const [formData, setFormData] = useState({
     farmName: "",
     products: [],
@@ -24,14 +27,14 @@ export const RegistrationForm = () => {
       latitude: "",
       longitude: "",
     },
-    userId: "6751dbdf54b3ea9433d1748b", // Valor predeterminado
+    userId: decodetoken.id, // Valor predeterminado
   });
 
   const farmName = formData.farmName;
   const latitude = formData.ubication.latitude;
   const longitude = formData.ubication.longitude;
   const userId = formData.userId;
-
+  
   const handleUbicationChange = (coords) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -59,20 +62,27 @@ export const RegistrationForm = () => {
     return null;
   };
 
+  const url = "https://hackaton-back-production.up.railway.app/save/peasant";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
     try {
       const response = await axios.post(
-        "https://hackaton-back-production.up.railway.app/save/peasant",
+        url,
         {
-        ubication: {
-                latitude: parseFloat(latitude),
-                longitude: parseFloat(longitude),
+          ubication: {
+            latitude: parseFloat(latitude),
+            longitude: parseFloat(longitude),
+          },
+          farmName: farmName,
+          products: [],
+          userId: userId,
         },
-        farmName: farmName,     
-        products:[],
-        user: userId,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Incluye el token en el encabezado
+          },
+          withCredentials: true, // Asegúrate de enviar cookies si es necesario
         }
       );
 
@@ -83,14 +93,12 @@ export const RegistrationForm = () => {
       });
     } catch (error) {
       if (error.response) {
-        // El servidor respondió con un código de error
         Swal.fire({
           icon: "error",
           title: "Error en el registro",
           text: error.response.data.message || "Hubo un problema al guardar los datos.",
         });
       } else {
-        // No hubo respuesta del servidor o ocurrió un error en la conexión
         Swal.fire({
           icon: "error",
           title: "Error en la conexión",
@@ -119,11 +127,11 @@ export const RegistrationForm = () => {
 
         <div className="space-y-2">
           <label className="block text-gray-600 font-medium">Seleccionar ubicación:</label>
-          <div className="h-72 border rounded-lg overflow-hidden">
+          <div className="map-container h-72 border rounded-lg relative">
             <MapContainer
               center={[4.15302, -73.6351]} // Coordenadas iniciales
               zoom={13}
-              className="h-full w-full"
+              className="absolute top-0 left-0 h-full w-full"
             >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -164,13 +172,7 @@ export const RegistrationForm = () => {
           />
         </div>
 
-        {/* Campo oculto para userId */}
-        <input
-          type="hidden"
-          name="userId"
-          value={formData.userId}
-          readOnly
-        />
+        <input type="hidden" name="userId" value={formData.userId} readOnly />
 
         <button
           type="submit"

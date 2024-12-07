@@ -1,14 +1,14 @@
-// src/pages/AgricultorDashboard.js
+// src/pages/ProveedorDashboard.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'; // Importar js-cookie
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { RegistrationForm } from "../pages/savePeasant";
 
-const AgricultorDashboard = () => {
-  const [companies, setCompanies] = useState([]);
-  const [peasants, setPeasants] = useState([]);
+const ProveedorDashboard = () => {
+  const [suppliers, setSuppliers] = useState([]); // Estado para almacenar los proveedores
   const [error, setError] = useState('');
   const [userInfo, setUserInfo] = useState(null);  // Estado para guardar los datos de userInfo
   const navigate = useNavigate();
@@ -19,30 +19,26 @@ const AgricultorDashboard = () => {
     const headers = { 'Content-Type': 'application/json' };
 
     // Recuperar los datos de la cookie
-    const userInfoCookie = Cookies.get('userInfo');
+    const userInfoCookie = Cookies.get('token');
     if (!userInfoCookie) {
       navigate('/login'); // Si no está autenticado, redirige a Login
     } else {
-      setUserInfo(JSON.parse(userInfoCookie));  // Parsear y guardar el userInfo desde la cookie
+      // setUserInfo(JSON.parse(userInfoCookie));  // Parsear y guardar el userInfo desde la cookie
     }
 
     const fetchData = async () => {
       try {
         const baseURL = 'https://hackaton-back-production.up.railway.app';
+        // const baseURL = 'http://localhost:3000';
 
-        // Obtener empresas
-        const companyResponse = await axios.get(`${baseURL}/companies`, {
+        // Obtener proveedores
+        const supplierResponse = await axios.get(`${baseURL}/suppliers`, {
           headers,
           withCredentials: true,
         });
-        setCompanies(companyResponse.data.data);
+        setSuppliers(supplierResponse.data.data);
 
-        // Obtener campesinos (En este caso, su información relevante para el agricultor)
-        const peasantsResponse = await axios.get(`${baseURL}/peasants`, {
-          headers,
-          withCredentials: true,
-        });
-        setPeasants(peasantsResponse.data.data);
+        // Obtener información adicional si es necesario
 
       } catch (err) {
         setError('Error al obtener los datos: ' + err.message);
@@ -53,12 +49,12 @@ const AgricultorDashboard = () => {
   }, [navigate]);
 
   const sessionCookie = Cookies.get('token');
-  console.log('Contenido de la cookie session:', sessionCookie);
+  console.log('Contenido de la cookie session 1:', sessionCookie);
 
   return (
     <div className="container mx-auto p-6 mt-12">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8" data-aos="fade-up">Dashboard Agricultor</h1>
-
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8" data-aos="fade-up">Dashboard Proveedor</h1>
+      <RegistrationForm />
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
       {/* Mostrar los datos de userInfo */}
@@ -74,44 +70,30 @@ const AgricultorDashboard = () => {
         </div>
       )}
 
-      {/* Mostrar empresas */}
-      {companies.length > 0 ? (
+      {/* Mostrar proveedores */}
+      {suppliers.length > 0 ? (
         <div data-aos="fade-left" className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Proveedores</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {companies.map((company) => (
+            {suppliers.map((supplier) => (
               <div
-                key={company._id}
+                key={supplier._id}
                 className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-shadow duration-300"
               >
-                <h3 className="text-xl font-bold text-gray-800">{company.companyName}</h3>
-                <p><strong>NIT:</strong> {company.nit}</p>
-                <p><strong>Contacto:</strong> {company.contact}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <p className="text-gray-600">No se pudieron cargar los datos de empresas.</p>
-      )}
-
-      {/* Mostrar campesinos */}
-      {peasants.length > 0 ? (
-        <div data-aos="fade-right">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Campesinos</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {peasants.map((peasant) => (
-              <div
-                key={peasant._id}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-shadow duration-300"
-              >
-                <h3 className="text-xl font-bold text-gray-800">{peasant.farmName}</h3>
-                <p><strong>Ubicación:</strong> {peasant.ubication.latitude}, {peasant.ubication.longitude}</p>
-                <p><strong>Productos:</strong></p>
+                <h3 className="text-xl font-bold text-gray-800">{supplier.supplierName}</h3>
+                <p><strong>NIT:</strong> {supplier.nit}</p>
+                <p><strong>Teléfono de Contacto:</strong> {supplier.contactPhone}</p>
+                <p><strong>Dirección:</strong> {supplier.address}</p>
+                <p><strong>Transportes Disponibles:</strong> {supplier.transportAvailability ? 'Sí' : 'No'}</p>
+                <p><strong>Áreas de Cobertura:</strong> {supplier.coverageAreas.join(', ')}</p>
+                
+                {/* Mostrar productos ofrecidos */}
+                <p><strong>Productos Ofrecidos:</strong></p>
                 <ul className="ml-4">
-                  {peasant.products.map((product) => (
+                  {supplier.productsOffered.map((product) => (
                     <li key={product._id} className="text-gray-600">
-                      <p><strong>{product.name}:</strong> {product.productionQuantity} unidades</p>
+                      <p><strong>Nombre:</strong> {product.name}</p>
+                      <p><strong>Precio:</strong> ${product.price}</p>
                     </li>
                   ))}
                 </ul>
@@ -120,10 +102,10 @@ const AgricultorDashboard = () => {
           </div>
         </div>
       ) : (
-        <p className="text-gray-600">No se pudieron cargar los datos de campesinos.</p>
+        <p className="text-gray-600">No se pudieron cargar los datos de proveedores.</p>
       )}
     </div>
   );
 };
 
-export default AgricultorDashboard;
+export default ProveedorDashboard;

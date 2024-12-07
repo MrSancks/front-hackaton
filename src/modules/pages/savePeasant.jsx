@@ -27,7 +27,7 @@ export const RegistrationForm = () => {
       latitude: "",
       longitude: "",
     },
-    userId: decodetoken.id, // Valor predeterminado
+    userId: decodetoken.id,
   });
 
   const farmName = formData.farmName;

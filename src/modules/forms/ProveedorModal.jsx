@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import CrearProducto from "./ProveedorProducts";
 
 export const ProveedorModal = () => {
   const token = document.cookie;
@@ -17,7 +18,7 @@ export const ProveedorModal = () => {
     transportAvailability: false,
     userId: decodetoken.id, // Valor predeterminado
   });
-  
+  const [idcampeche, setIdcampeche] = useState(""); 
   const [isProvider, setIsProvider] = useState(false); // Estado para verificar si ya es proveedor
   
   useEffect(() => {
@@ -32,11 +33,13 @@ export const ProveedorModal = () => {
         });
 
         const existingProvider = response.data.data.find(
-          (supplier) => supplier.user._id === decodetoken.id
+          (supplier) => supplier.user._id === decodetoken.id,
         );
         
         if (existingProvider) {
-          setIsProvider(true); // El usuario ya es proveedor
+          setIsProvider(true);
+          setIdcampeche(existingProvider._id);
+           // El usuario ya es proveedor
         }
       } catch (error) {
         console.error("Error al verificar proveedor:", error);
@@ -120,8 +123,7 @@ export const ProveedorModal = () => {
   if (isProvider) {
     return (
       <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800 text-center">Ya eres proveedor</h2>
-        <p className="text-center text-gray-600">Ya has sido registrado como proveedor. No puedes registrar un nuevo proveedor.</p>
+        <CrearProducto supplierId={idcampeche} />
       </div>
     );
   }

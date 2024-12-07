@@ -160,7 +160,7 @@ const Register = () => {
                   <option value="">Selecciona un rol</option>
                   <option value="agricultor">Agricultor</option>
                   <option value="proveedor">Proveedor</option>
-                  <option value="empresa_turistica">Empresa Turística</option>
+                  <option value="empresa turistica">Empresa Turística</option>
                 </select>
               </div>
               {/* Botón de Registro */}

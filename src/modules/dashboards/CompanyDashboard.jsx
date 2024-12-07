@@ -6,7 +6,8 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import CompanyModal from '../forms/CompanyModal';
 import ProductsDisplayPeasant from '../forms/ProductsDisplayPeasant';  // Importa el modal
-
+import { jwtDecode } from 'jwt-decode';
+import RequestCompany from '../forms/RequestCompany';
 const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -16,6 +17,8 @@ const ProveedorDashboard = () => {
   const [selectedSupplier, setSelectedSupplier] = useState(null);  // Almacena el proveedor seleccionado
   const [isModalOpen, setIsModalOpen] = useState(false);  // Controla la apertura del modal
   const navigate = useNavigate();
+  const token=document.cookie;
+  const decodetoken=jwtDecode(token)
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -104,6 +107,18 @@ const ProveedorDashboard = () => {
           >
             Proveedores
           </li>
+          <li
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'solicitud' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('solicitud')}
+          >
+            Crear Solicitud
+          </li>
+          <li
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'showsolicitud' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('showsolicitud')}
+          >
+            Ver Solicitudes
+          </li>
         </ul>
       </div>
 
@@ -173,8 +188,26 @@ const ProveedorDashboard = () => {
             </div>
           </div>
         )}
+        {/*solicitud*/}
+      {selectedTab === 'solicitud' && (
+          <div data-aos="fade-left" className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
+            <div className="">
+            <RequestCompany supplierId={decodetoken.id} className="pt-10"></RequestCompany>
+            </div>
+          </div>
+        )}
+        {selectedTab === 'showsolicitud' && (
+          <div data-aos="fade-left" className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
+            <div className="">
+            <RequestCompany supplierId={decodetoken.id} className="pt-10"></RequestCompany>
+            </div>
+          </div>
+        )}
       </div>
 
+      
       {/* Modal de productos */}
       {selectedSupplier && (
         <ProductsDisplayPeasant
@@ -183,6 +216,7 @@ const ProveedorDashboard = () => {
           onClose={handleCloseModal}
         />
       )}
+      
     </div>
   );
 };

@@ -48,7 +48,7 @@ export const PeasantModal = () => {
         });
 
         const existingPeasant = response.data.data.find(
-          (peasant) => peasant.user === decodedToken.id
+          (peasant) => peasant.user._id === decodedToken.id
         );
 
         if (existingPeasant) {

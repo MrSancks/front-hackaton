@@ -5,6 +5,9 @@ import Cookies from 'js-cookie';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import ProductModal from '../forms/PeasantModal'; // Reemplazar PeasantModal por ProductModal
+import { jwtDecode } from 'jwt-decode';
+import RequestCompany from '../forms/RequestCompany';
+import ViewRequest from '../forms/ViewRequest';
 
 const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
@@ -13,6 +16,8 @@ const ProveedorDashboard = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [selectedTab, setSelectedTab] = useState('productos'); // Tab predeterminada
   const navigate = useNavigate();
+  const token=document.cookie;
+  const decodetoken=jwtDecode(token)
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -82,7 +87,18 @@ const ProveedorDashboard = () => {
           >
             Empresas Asociadas
           </li>
-          
+          <li
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'solicitud' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('solicitud')}
+          >
+            Crear Solicitud
+          </li>
+          <li
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'showsol' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('showsol')}
+          >
+            Ver Solicitudes
+          </li>
         </ul>
       </div>
 
@@ -140,6 +156,15 @@ const ProveedorDashboard = () => {
             <ProductModal /> {/* Modal para gestionar productos */}
           </div>
         )}
+        {/*solicitud*/}
+      {selectedTab === 'solicitud' && (
+          <div data-aos="fade-left" className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
+            <div className="">
+            <RequestCompany supplierId={decodetoken.id} className="pt-10"></RequestCompany>
+            </div>
+          </div>
+        )}
 
         {/* Mensajes si no hay datos */}
         {selectedTab === 'proveedores' && suppliers.length === 0 && (
@@ -147,6 +172,14 @@ const ProveedorDashboard = () => {
         )}
         {selectedTab === 'empresas' && companies.length === 0 && (
           <p className="text-gray-600">No se pudieron cargar los datos de empresas.</p>
+        )}
+        {selectedTab === 'showsol' && (
+          <div data-aos="fade-left" className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
+            <div className="">
+            <RequestCompany supplierId={decodetoken.id} className="pt-10"></RequestCompany>
+            </div>
+          </div>
         )}
       </div>
     </div>

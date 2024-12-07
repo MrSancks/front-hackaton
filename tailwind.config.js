@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      padding: {
+        '50px': '50px',
+      },
       colors: {
         coral: {
           DEFAULT: "#FF6F61",

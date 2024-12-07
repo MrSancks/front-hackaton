@@ -6,7 +6,7 @@ import CrearProducto from "./ProveedorProducts";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-
+import RequestCompany from '../forms/RequestCompany';
 
 
 AOS.init();
@@ -32,6 +32,7 @@ export const ProveedorModal = () => {
   const [isProvider, setIsProvider] = useState(false); // Estado para verificar si ya es proveedor
   
   useEffect(() => {
+    console.log(decodetoken.id)
     // Verificar si el usuario ya es proveedor
     const checkIfUserIsProvider = async () => {
       try {

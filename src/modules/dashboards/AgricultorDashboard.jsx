@@ -9,11 +9,15 @@ import { jwtDecode } from 'jwt-decode';
 import RequestCompany from '../forms/RequestCompany';
 import ViewRequest from '../forms/ViewRequest';
 import RequestUser from '../forms/RequestUser';
+import Empresas from './Vistas/Empresas';
+import Proveedores from "./Vistas/Proveedor";
 
 const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [error, setError] = useState('');
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [selectedTab, setSelectedTab] = useState('productos'); // Tab predeterminada
   const navigate = useNavigate();
@@ -63,7 +67,10 @@ const ProveedorDashboard = () => {
 
     fetchData();
   }, [navigate]);
-
+  const handleOpenModal = (supplier) => {
+    setSelectedSupplier(supplier);
+    setIsModalOpen(true);
+  };
   return (
     <div className="flex min-h-screen">
       {/* Barra lateral */}
@@ -86,7 +93,7 @@ const ProveedorDashboard = () => {
             className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'empresas' ? 'bg-gray-300' : ''}`}
             onClick={() => setSelectedTab('empresas')}
           >
-            Empresas Asociadas
+            Empresas
           </li>
           <li
             className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'solicitud' ? 'bg-gray-300' : ''}`}
@@ -115,46 +122,12 @@ const ProveedorDashboard = () => {
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-        {/* Mostrar proveedores */}
-        {selectedTab === 'proveedores' && suppliers.length > 0 && (
-          <div data-aos="fade-left">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Proveedores</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {suppliers.map((supplier) => (
-                <div
-                  key={supplier._id}
-                  className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-shadow duration-300"
-                >
-                  <h3 className="text-xl font-bold text-gray-800">{supplier.supplierName}</h3>
-                  <p><strong>NIT:</strong> {supplier.nit}</p>
-                  <p><strong>Teléfono de Contacto:</strong> {supplier.contactPhone}</p>
-                  <p><strong>Dirección:</strong> {supplier.address}</p>
-                  <p><strong>Transportes Disponibles:</strong> {supplier.transportAvailability ? 'Sí' : 'No'}</p>
-                  <p><strong>Áreas de Cobertura:</strong> {supplier.coverageAreas.join(', ')}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        {selectedTab === "proveedores" && (
+          <Proveedores suppliers={suppliers} handleOpenModal={handleOpenModal} />
         )}
 
         {/* Mostrar empresas */}
-        {selectedTab === 'empresas' && companies.length > 0 && (
-          <div data-aos="fade-left" className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {companies.map((company) => (
-                <div
-                  key={company._id}
-                  className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-shadow duration-300"
-                >
-                  <h3 className="text-xl font-bold text-gray-800">{company.companyName}</h3>
-                  <p><strong>NIT:</strong> {company.nit}</p>
-                  <p><strong>Contacto:</strong> {company.contact}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {selectedTab === 'empresas' && <Empresas companies={companies} />}
 
         {/* Mostrar productos */}
         {selectedTab === 'productos' && (

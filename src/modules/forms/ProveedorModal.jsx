@@ -3,7 +3,13 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import CrearProducto from "./ProveedorProducts";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 
+
+
+AOS.init();
 export const ProveedorModal = () => {
   const token = document.cookie;
   const decodetoken = jwtDecode(token);
@@ -16,6 +22,10 @@ export const ProveedorModal = () => {
     productsOffered: [], // Inicialmente vacío
     coverageAreas: [],
     transportAvailability: false,
+    ubication: {
+      latitude: "",
+      longitude: "",
+    },
     userId: decodetoken.id, // Valor predeterminado
   });
   const [idcampeche, setIdcampeche] = useState(""); 
@@ -49,6 +59,17 @@ export const ProveedorModal = () => {
     checkIfUserIsProvider();
   }, [token, decodetoken.id]);
 
+  const handleUbicationChange = (coords) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      ubication: {
+        latitude: coords.lat,
+        longitude: coords.lng,
+      },
+    }));
+  };
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -73,6 +94,15 @@ export const ProveedorModal = () => {
       transportAvailability: checked,
     }));
   };
+  const LocateUser = () => {
+    useMapEvents({
+      click(e) {
+        handleUbicationChange(e.latlng); // Actualiza las coordenadas cuando se hace clic en el mapa
+      },
+    });
+    return null;
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,6 +118,10 @@ export const ProveedorModal = () => {
           productsOffered: [],
           coverageAreas: formData.coverageAreas,
           transportAvailability: formData.transportAvailability,
+          ubication: {
+            latitude: formData.ubication.latitude,
+            longitude: formData.ubication.longitude,
+          },
           userId: decodetoken.id,
         },
         {
@@ -122,17 +156,18 @@ export const ProveedorModal = () => {
 
   if (isProvider) {
     return (
-      <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
+      <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6 mb-9">
         <CrearProducto supplierId={idcampeche} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6 ">
       <h2 className="text-2xl font-bold text-gray-800 text-center">Registro de Proveedor</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Supplier Name */}
         <div className="space-y-2">
           <label className="block text-gray-600 font-medium">Nombre del Proveedor:</label>
           <input
@@ -145,6 +180,7 @@ export const ProveedorModal = () => {
           />
         </div>
 
+        {/* NIT */}
         <div className="space-y-2">
           <label className="block text-gray-600 font-medium">NIT:</label>
           <input
@@ -157,6 +193,7 @@ export const ProveedorModal = () => {
           />
         </div>
 
+        {/* Contact Phone */}
         <div className="space-y-2">
           <label className="block text-gray-600 font-medium">Teléfono de Contacto:</label>
           <input
@@ -168,6 +205,7 @@ export const ProveedorModal = () => {
           />
         </div>
 
+        {/* Address */}
         <div className="space-y-2">
           <label className="block text-gray-600 font-medium">Dirección:</label>
           <input
@@ -179,6 +217,7 @@ export const ProveedorModal = () => {
           />
         </div>
 
+        {/* Coverage Areas */}
         <div className="space-y-2">
           <label className="block text-gray-600 font-medium">Áreas de Cobertura (separadas por comas):</label>
           <input
@@ -191,6 +230,7 @@ export const ProveedorModal = () => {
           />
         </div>
 
+        {/* Transport Availability */}
         <div className="space-y-2">
           <label className="inline-flex items-center text-gray-600 font-medium">
             <input
@@ -204,6 +244,56 @@ export const ProveedorModal = () => {
           </label>
         </div>
 
+        {/*mapa*/}
+        
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">Seleccionar Ubicación:</label>
+          <div className="h-72 border rounded-lg relative">
+            <MapContainer
+              center={[4.15302, -73.6351]} // Coordenadas iniciales
+              zoom={13}
+              className="absolute top-0 left-0 h-full w-full"
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+              />
+              {formData.ubication.latitude && formData.ubication.longitude && (
+                <Marker
+                  position={[
+                    formData.ubication.latitude,
+                    formData.ubication.longitude,
+                  ]}
+                />
+              )}
+              <LocateUser />
+            </MapContainer>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">Latitud:</label>
+          <input
+            type="number"
+            name="latitude"
+            value={formData.ubication.latitude}
+            readOnly
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">Longitud:</label>
+          <input
+            type="number"
+            name="longitude"
+            value={formData.ubication.longitude}
+            readOnly
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        {/* Hidden User ID */}
         <input
           type="hidden"
           name="userId"
@@ -211,6 +301,7 @@ export const ProveedorModal = () => {
           readOnly
         />
 
+        {/* Submit Button */}
         <button
           type="submit"
           className="w-full py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300"
@@ -221,5 +312,6 @@ export const ProveedorModal = () => {
     </div>
   );
 };
+
 
 export default ProveedorModal;

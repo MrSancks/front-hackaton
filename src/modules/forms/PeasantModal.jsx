@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; 
 import "leaflet/dist/leaflet.css"; // Importar estilos de Leaflet
+import CrearProducto from "./PeasantProduct";
 
 // Configuración del ícono predeterminado de Leaflet
 const DefaultIcon = L.icon({
@@ -33,6 +34,7 @@ export const PeasantModal = () => {
 
   const [isPeasant, setIsPeasant] = useState(false); // Verifica si ya es un campesino
   const [peasantId, setPeasantId] = useState("");
+  const [peasantName, setpeasantName] = useState("");
 
   useEffect(() => {
     // Verificar si el usuario ya tiene una finca registrada
@@ -52,6 +54,7 @@ export const PeasantModal = () => {
         if (existingPeasant) {
           setIsPeasant(true);
           setPeasantId(existingPeasant._id);
+          setpeasantName(existingPeasant.farmName);
            // Almacena el ID de la finca existente
         }
       } catch (error) {
@@ -137,10 +140,7 @@ export const PeasantModal = () => {
   if (isPeasant) {
     return (
       <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800 text-center">Ya tienes una Finca Registrada</h2>
-        <p className="text-center text-gray-600">
-          Tu finca ya está registrada en el sistema. ID: {peasantId}
-        </p>
+        <CrearProducto supplierId={peasantId} />
       </div>
     );
   }

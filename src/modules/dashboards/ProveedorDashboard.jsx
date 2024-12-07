@@ -1,16 +1,17 @@
-// src/pages/ProveedorDashboard.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie'; // Importar js-cookie
+import Cookies from 'js-cookie';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import ProveedorModal from '../forms/ProveedorModal';
+
 const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
-  const [suppliers, setSuppliers] = useState([]); // Estado para los proveedores
+  const [peasants, setPeasants] = useState([]); // Estado para los agricultores
   const [error, setError] = useState('');
-  const [userInfo, setUserInfo] = useState(null);  // Estado para guardar los datos de userInfo
+  const [userInfo, setUserInfo] = useState(null);
+  const [selectedTab, setSelectedTab] = useState('productos');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,14 +22,7 @@ const ProveedorDashboard = () => {
     // Recuperar los datos de la cookie
     const userInfoCookie = Cookies.get('token');
     if (!userInfoCookie) {
-      navigate('/login'); // Si no está autenticado, redirige a Login
-    } else {
-      try {
-        // Decodificar el token JWT para obtener la información del usuario
-      } catch (err) {
-        console.error('Error al decodificar el token:', err);
-        navigate('/login'); // Si el token no es válido, redirige a Login
-      }
+      navigate('/login');
     }
 
     const fetchData = async () => {
@@ -42,12 +36,12 @@ const ProveedorDashboard = () => {
         });
         setCompanies(companyResponse.data.data);
 
-        // Obtener proveedores
-        const supplierResponse = await axios.get(`${baseURL}/suppliers`, {
+        // Obtener agricultores
+        const peasantsResponse = await axios.get(`${baseURL}/peasants`, {
           headers,
           withCredentials: true,
         });
-        setSuppliers(supplierResponse.data.data);
+        setPeasants(peasantsResponse.data.data);
 
       } catch (err) {
         setError('Error al obtener los datos: ' + err.message);
@@ -58,79 +52,98 @@ const ProveedorDashboard = () => {
   }, [navigate]);
 
   return (
-    <div className="container mx-auto p-6 mt-12">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8" data-aos="fade-up">Dashboard Proveedor</h1>
-      <ProveedorModal></ProveedorModal>
+    <div className="flex min-h-screen">
+      {/* Barra lateral */}
+      <div className="w-1/5 border-r-2 border-gray-200 text-black p-4 shadow">
+        <h2 className="text-xl font-bold mb-4">Menú</h2>
+        <ul className="border-2 border-gray-200">
+          <li
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'productos' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('productos')}
+          >
+            Productos
+          </li>
+          <li
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'empresas' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('empresas')}
+          >
+            Empresas Asociadas
+          </li>
+          <li
+            className={`cursor-pointer p-2 rounded hover:bg-gray-100 border-b-2 border-gray-200 ${selectedTab === 'agricultores' ? 'bg-gray-300' : ''}`}
+            onClick={() => setSelectedTab('agricultores')}
+          >
+            Agricultores
+          </li>
+        </ul>
+      </div>
 
-      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+      {/* Contenido principal */}
+      <div className="w-4/5 p-6 mt-12">
+        {error && <p className="text-red-500 text-center my-4">{error}</p>}
 
-      {userInfo && (
-        <div data-aos="fade-left" className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Información del Usuario</h2>
-          <p><strong>Nombre:</strong> {userInfo.name}</p>
-          <p><strong>Email:</strong> {userInfo.email}</p>
-          <p><strong>Rol:</strong> {userInfo.role}</p>
-          <p><strong>ID de Usuario:</strong> {userInfo.id}</p>
-          <p><strong>Teléfono:</strong> {userInfo.phone || 'No disponible'}</p>
-          <p><strong>Dirección:</strong> {userInfo.address || 'No disponible'}</p>
-        </div>
-      )}
-
-      {/* Mostrar empresas */}
-      {companies.length > 0 ? (
-        <div data-aos="fade-left" className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {companies.map((company) => (
-              <div
-                key={company._id}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-shadow duration-300"
-              >
-                <h3 className="text-xl font-bold text-gray-800">{company.companyName}</h3>
-                <p><strong>NIT:</strong> {company.nit}</p>
-                <p><strong>Contacto:</strong> {company.contact}</p>
-              </div>
-            ))}
+        {selectedTab === 'productos' && (
+          <div className="mb-12">
+            <h1 className="text-4xl font-bold text-center text-gray-800 mb-9" data-aos="fade-left">
+              Dashboard Proveedor
+            </h1>
+            <p className="text-center text-gray-800 mb-8">Aquí encontrarás las empresas y agricultores del Meta que requieran algún producto que puedas ofrecer.</p>
+            <ProveedorModal></ProveedorModal>
           </div>
-        </div>
-      ) : (
-        <p className="text-gray-600">No se pudieron cargar los datos de empresas.</p>
-      )}
+        )}
 
-      {/* Mostrar proveedores */}
-      {suppliers.length > 0 ? (
-        <div data-aos="fade-right">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Proveedores</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {suppliers.map((supplier) => (
-              <div
-                key={supplier._id}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-shadow duration-300"
-              >
-                <h3 className="text-xl font-bold text-gray-800">{supplier.supplierName}</h3>
-                <p><strong>NIT:</strong> {supplier.nit}</p>
-                <p><strong>Teléfono de Contacto:</strong> {supplier.contactPhone}</p>
-                <p><strong>Dirección:</strong> {supplier.address}</p>
-                <p><strong>Transportes Disponibles:</strong> {supplier.transportAvailability ? 'Sí' : 'No'}</p>
-                <p><strong>Áreas de Cobertura:</strong> {supplier.coverageAreas.join(', ')}</p>
-                <p><strong>Productos Ofrecidos:</strong></p>
-                
-                <ul className="ml-4">
-                  {supplier.productsOffered.map((product) => (
-                    <li key={product._id} className="text-gray-600">
-                      <p><strong>Nombre:</strong> {product.name}</p>
-                      <p><strong>Precio:</strong> ${product.price}</p>
-                      
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+        {selectedTab === 'empresas' && (
+          <div data-aos="fade-left" className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {companies.length > 0 ? (
+                companies.map((company) => (
+                  <div
+                    key={company._id}
+                    className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-shadow duration-300 hover:border-2 hover:border-red-500"
+                  >
+                    <h3 className="text-xl font-bold text-gray-800">{company.companyName}</h3>
+                    <p><strong>NIT:</strong> {company.nit}</p>
+                    <p><strong>Contacto:</strong> {company.contact}</p>
+                    <a
+                      href={`https://wa.me/57${company.contact}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition duration-300 mt-4"
+                    >
+                      Enviar mensaje
+                    </a>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-600">No se pudieron cargar los datos de empresas.</p>
+              )}
+            </div>
           </div>
-        </div>
-      ) : (
-        <p className="text-gray-600">No se pudieron cargar los datos de proveedores.</p>
-      )}
+        )}
+
+        {selectedTab === 'agricultores' && (
+          <div data-aos="fade-left">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Agricultores</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {peasants.length > 0 ? (
+                peasants.map((peasant) => (
+                  <div
+                    key={peasant._id}
+                    className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-shadow duration-300 hover:border-2 hover:border-red-500"
+                  >
+                    <h3 className="text-xl font-bold text-gray-800">{peasant.farmName}</h3>
+                    <p><strong>Latitud:</strong> {peasant.ubication.latitude}</p>
+                    <p><strong>Longitud:</strong> {peasant.ubication.longitude}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-600">No se pudieron cargar los datos de agricultores.</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

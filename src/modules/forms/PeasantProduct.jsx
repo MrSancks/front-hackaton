@@ -3,14 +3,13 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-export const ProveedorProducts = ({ supplierId }) => {
+export const PeasantProduct = ({ supplierId }) => {
   const token = document.cookie;
   const decodetoken = jwtDecode(token);
 
   const [formData, setFormData] = useState({
     name: "",
     price: "",
-    quantity:"",
   });
 
   useEffect(() => {
@@ -36,11 +35,10 @@ export const ProveedorProducts = ({ supplierId }) => {
 
     try {
       const response = await axios.post(
-        `https://hackaton-back-production.up.railway.app/suppliers/${supplierId}/products`,
+        `https://hackaton-back-production.up.railway.app/peasants/${supplierId}/products`,
         {
           name: formData.name,
-          price: formData.price,
-          quantity:formData.quantity,
+          productionQuantity: formData.price,
         },
         {
           headers: {
@@ -55,7 +53,7 @@ export const ProveedorProducts = ({ supplierId }) => {
         title: "¡Producto creado!",
         text: response.data.message || "El producto ha sido creado correctamente.",
       });
-      setFormData({ name: "", price: "", quantity: "" }); // Limpiar el formulario
+      setFormData({ name: "", price: "" }); // Limpiar el formulario
     } catch (error) {
       if (error.response) {
         Swal.fire({
@@ -91,22 +89,11 @@ export const ProveedorProducts = ({ supplierId }) => {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-gray-600 font-medium">Precio:</label>
+          <label className="block text-gray-600 font-medium">Cantidad:</label>
           <input
             type="number"
             name="price"
             value={formData.price}
-            onChange={handleInputChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="block text-gray-600 font-medium">Cantidad:</label>
-          <input
-            type="number"
-            name="quantity"
-            value={formData.quantity}
             onChange={handleInputChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -124,4 +111,4 @@ export const ProveedorProducts = ({ supplierId }) => {
   );
 };
 
-export default ProveedorProducts;
+export default PeasantProduct;

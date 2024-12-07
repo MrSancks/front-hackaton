@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // Corrige el import de jwt-decode
-
+import { jwtDecode } from "jwt-decode";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css"; // Importar estilos de Leaflet
 export const CompanyModal = () => {
 
   const token = document.cookie;
@@ -12,6 +13,10 @@ export const CompanyModal = () => {
     companyName: "",
     nit: "",
     contact: "",
+    ubication: {
+      latitude: "",
+      longitude: "",
+    },
     userId: decodedToken.id, // Obtén el ID del usuario desde el token
   });
 
@@ -41,10 +46,18 @@ export const CompanyModal = () => {
         console.error("Error al verificar empresa:", error);
       }
     };
-
     checkIfUserIsCompany();
   }, [token, decodedToken.id]);
 
+  const handleUbicationChange = (coords) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      ubication: {
+        latitude: coords.lat,
+        longitude: coords.lng,
+      },
+    }));
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -53,6 +66,15 @@ export const CompanyModal = () => {
     }));
   };
 
+  const LocateUser = () => {
+    useMapEvents({
+      click(e) {
+        handleUbicationChange(e.latlng); // Actualiza las coordenadas cuando se hace clic en el mapa
+      },
+    });
+    return null;
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,6 +86,10 @@ export const CompanyModal = () => {
           nit: formData.nit,
           contact: formData.contact,
           userId: decodedToken.id,
+          ubication: {
+            latitude: formData.ubication.latitude,
+            longitude: formData.ubication.longitude,
+          },
         },
         {
           headers: {
@@ -142,6 +168,54 @@ export const CompanyModal = () => {
             name="contact"
             value={formData.contact}
             onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+        {/*mapa*/}
+        
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">Seleccionar Ubicación:</label>
+          <div className="h-72 border rounded-lg relative">
+            <MapContainer
+              center={[4.15302, -73.6351]} // Coordenadas iniciales
+              zoom={13}
+              className="absolute top-0 left-0 h-full w-full"
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+              />
+              {formData.ubication.latitude && formData.ubication.longitude && (
+                <Marker
+                  position={[
+                    formData.ubication.latitude,
+                    formData.ubication.longitude,
+                  ]}
+                />
+              )}
+              <LocateUser />
+            </MapContainer>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">Latitud:</label>
+          <input
+            type="number"
+            name="latitude"
+            value={formData.ubication.latitude}
+            readOnly
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">Longitud:</label>
+          <input
+            type="number"
+            name="longitude"
+            value={formData.ubication.longitude}
+            readOnly
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>

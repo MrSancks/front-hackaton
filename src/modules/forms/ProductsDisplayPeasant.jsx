@@ -28,7 +28,7 @@ const ProductsDisplayPeasant = ({ supplier, isOpen, onClose }) => {
               <p><strong>Precio:</strong> ${product.price}</p>
               <p><strong>Descripción:</strong> {product.description || 'No disponible'}</p>
               <a
-                href={`https://wa.me/${supplier.contactPhone}`}
+                href={`https://wa.me/57${supplier.contactPhone}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 hover:underline mt-2 inline-block"

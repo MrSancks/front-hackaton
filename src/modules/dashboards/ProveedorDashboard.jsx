@@ -64,7 +64,6 @@ const ProveedorDashboard = () => {
 
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-      {/* Mostrar los datos de userInfo */}
       {userInfo && (
         <div data-aos="fade-left" className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 mb-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Información del Usuario</h2>
@@ -115,11 +114,13 @@ const ProveedorDashboard = () => {
                 <p><strong>Transportes Disponibles:</strong> {supplier.transportAvailability ? 'Sí' : 'No'}</p>
                 <p><strong>Áreas de Cobertura:</strong> {supplier.coverageAreas.join(', ')}</p>
                 <p><strong>Productos Ofrecidos:</strong></p>
+                
                 <ul className="ml-4">
                   {supplier.productsOffered.map((product) => (
                     <li key={product._id} className="text-gray-600">
                       <p><strong>Nombre:</strong> {product.name}</p>
                       <p><strong>Precio:</strong> ${product.price}</p>
+                      
                     </li>
                   ))}
                 </ul>

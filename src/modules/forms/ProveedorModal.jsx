@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export const ProveedorModal = () => {
   const token = document.cookie;
-  const decodetoken= jwtDecode(token);
+  const decodetoken = jwtDecode(token);
   
   const [formData, setFormData] = useState({
     supplierName: "",
@@ -17,10 +17,35 @@ export const ProveedorModal = () => {
     transportAvailability: false,
     userId: decodetoken.id, // Valor predeterminado
   });
-
   
-  console.log(decodetoken.id)// Suponiendo que el token está en la cookie
-  console.log(formData)
+  const [isProvider, setIsProvider] = useState(false); // Estado para verificar si ya es proveedor
+  
+  useEffect(() => {
+    // Verificar si el usuario ya es proveedor
+    const checkIfUserIsProvider = async () => {
+      try {
+        const response = await axios.get("https://hackaton-back-production.up.railway.app/suppliers", {
+          headers: {
+            Authorization: `Bearer ${token}`,// Incluye el token en el encabezado
+          },
+          withCredentials: true,
+        });
+
+        const existingProvider = response.data.data.find(
+          (supplier) => supplier.user._id === decodetoken.id
+        );
+        
+        if (existingProvider) {
+          setIsProvider(true); // El usuario ya es proveedor
+        }
+      } catch (error) {
+        console.error("Error al verificar proveedor:", error);
+      }
+    };
+
+    checkIfUserIsProvider();
+  }, [token, decodetoken.id]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -64,9 +89,9 @@ export const ProveedorModal = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Incluye el token en el encabezado
+            Authorization: `Bearer ${token}`,
           },
-          withCredentials: true, // Asegúrate de enviar cookies si es necesario
+          withCredentials: true,
         }
       );
 
@@ -77,14 +102,12 @@ export const ProveedorModal = () => {
       });
     } catch (error) {
       if (error.response) {
-        // El servidor respondió con un código de error
         Swal.fire({
           icon: "error",
           title: "Error en el registro",
           text: error.response.data.message || "Hubo un problema al guardar los datos.",
         });
       } else {
-        // No hubo respuesta del servidor o ocurrió un error en la conexión
         Swal.fire({
           icon: "error",
           title: "Error en la conexión",
@@ -93,6 +116,15 @@ export const ProveedorModal = () => {
       }
     }
   };
+
+  if (isProvider) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
+        <h2 className="text-2xl font-bold text-gray-800 text-center">Ya eres proveedor</h2>
+        <p className="text-center text-gray-600">Ya has sido registrado como proveedor. No puedes registrar un nuevo proveedor.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
@@ -170,7 +202,6 @@ export const ProveedorModal = () => {
           </label>
         </div>
 
-        {/* Campo oculto para userId */}
         <input
           type="hidden"
           name="userId"

@@ -50,8 +50,8 @@ const Login = () => {
           case "proveedor":
             navigate("/proveedor-dashboard");
             break;
-          case "empresa-turistica":
-            navigate("/empresa-turistica-dashboard");
+          case "empresa turistica":
+            navigate("/company-dashboard");
             break;
           default:
             navigate("/");

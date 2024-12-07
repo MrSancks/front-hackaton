@@ -25,6 +25,8 @@ export const PeasantModal = () => {
   
   const [formData, setFormData] = useState({
     farmName: "",
+    contact: "", // Número de contacto
+    address: "", // Dirección
     ubication: {
       latitude: "",
       longitude: "",
@@ -91,7 +93,7 @@ export const PeasantModal = () => {
     });
     return null;
   };
-
+  console.log(formData)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -100,6 +102,8 @@ export const PeasantModal = () => {
         "https://hackaton-back-production.up.railway.app/save/peasant",
         {
           farmName: formData.farmName,
+          contact: formData.contact,
+          address: formData.address,
           products: [],
           ubication: {
             latitude: formData.ubication.latitude,
@@ -162,6 +166,30 @@ export const PeasantModal = () => {
         </div>
 
         <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">Número de Contacto:</label>
+          <input
+            type="text"
+            name="contact"
+            value={formData.contact}
+            onChange={handleInputChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">Dirección:</label>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleInputChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div className="space-y-2">
           <label className="block text-gray-600 font-medium">Seleccionar Ubicación:</label>
           <div className="h-72 border rounded-lg relative">
             <MapContainer
@@ -175,10 +203,7 @@ export const PeasantModal = () => {
               />
               {formData.ubication.latitude && formData.ubication.longitude && (
                 <Marker
-                  position={[
-                    formData.ubication.latitude,
-                    formData.ubication.longitude,
-                  ]}
+                  position={[formData.ubication.latitude, formData.ubication.longitude]}
                 />
               )}
               <LocateUser />

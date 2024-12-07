@@ -39,6 +39,7 @@ const Login = () => {
         const userRole = response.data.userInfo.role;
 
         Cookies.set("token", response.data.token);
+        Cookies.set("userInfo", JSON.stringify(response.data.userInfo));
 
         switch (userRole) {
           case "administrador":

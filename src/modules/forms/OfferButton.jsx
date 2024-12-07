@@ -1,109 +1,113 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDollarSign, faBox, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 const OfferButton = ({ requestId, userId }) => {
-  const [amount, setAmount] = useState(""); // Estado para cantidad
-  const [price, setPrice] = useState(""); // Estado para precio
-  const token = document.cookie; // Obtener token desde las cookies
+    const [amount, setAmount] = useState(""); // Estado para cantidad
+    const [price, setPrice] = useState(""); // Estado para precio
+    const token = document.cookie; // Obtener token desde las cookies
 
-  // Función para manejar el envío de la oferta
-  const handleOffer = async () => {
-    // Asegurar que amount y price sean números
-    const parsedAmount = Number(amount);
-    const parsedPrice = Number(price);
+    // Función para manejar el envío de la oferta
+    const handleOffer = async () => {
+        const parsedAmount = Number(amount);
+        const parsedPrice = Number(price);
 
-    // Validación de los campos para asegurar que sean números válidos
-    if (!parsedAmount || !parsedPrice) {
-      Swal.fire({
-        icon: "warning",
-        title: "Campos incompletos o inválidos",
-        text: "Por favor, ingrese valores válidos para la cantidad y el precio.",
-      });
-      return;
-    }
+        if (!parsedAmount || !parsedPrice) {
+            Swal.fire({
+                icon: "warning",
+                title: "Campos incompletos o inválidos",
+                text: "Por favor, ingrese valores válidos para la cantidad y el precio.",
+            });
+            return;
+        }
 
-    // Crear el objeto para la oferta
-    const offerData = {
-      requestId,
-      userId,
-      amount: parsedAmount, // Asegurarse de enviar el valor como número
-      price: parsedPrice,   // Asegurarse de enviar el valor como número
+        const offerData = {
+            requestId,
+            userId,
+            amount: parsedAmount,
+            price: parsedPrice,
+        };
+
+        try {
+            const response = await axios.post(
+                "https://hackaton-back-production.up.railway.app/offer",
+                offerData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            if (!response.data.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Oferta enviada",
+                    text: "Tu oferta se ha enviado correctamente.",
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error al enviar la oferta",
+                    text: "Hubo un problema al enviar la oferta. Inténtalo nuevamente.",
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Error al enviar la oferta",
+                text: "Hubo un problema al enviar la oferta. Inténtalo más tarde.",
+            });
+        }
     };
 
-    try {
-     console.log(offerData)
-      const response = await axios.post(
-        "https://hackaton-back-production.up.railway.app/offer",
-        offerData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Pasar el token de autenticación
-          },
-          withCredentials: true, // Mantener las cookies con la solicitud
-        }
-      );
+    return (
+        <div className="space-y-6 p-6 bg-white rounded-lg shadow-md max-w-md mx-auto">
+            <h3 className="text-lg font-semibold text-gray-700 text-center">Hacer una Oferta</h3>
 
-      // Verificar si la respuesta es exitosa
-      if (!response.data.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Oferta enviada",
-          text: "Tu oferta se ha enviado correctamente.",
-        });
-      } else {
-        // Si ocurre un error en el servidor
-        Swal.fire({
-          icon: "error",
-          title: "Error al enviar la oferta",
-          text: "Hubo un problema al enviar la oferta. Inténtalo nuevamente.",
-        });
-      }
-    } catch (error) {
-      // Manejo de errores en caso de que falle la solicitud
-      Swal.fire({
-        icon: "error",
-        title: "Error al enviar la oferta",
-        text: "Hubo un problema al enviar la oferta. Inténtalo más tarde.",
-      });
-    }
-  };
+            {/* Input para la cantidad */}
+            <div className="relative">
+                <label className="text-gray-600 mb-1 block">Cantidad</label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
+                    <FontAwesomeIcon icon={faBox} className="text-gray-500 mx-2" />
+                    <input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className="w-full border-none focus:outline-none"
+                        placeholder="Ingrese la cantidad"
+                    />
+                </div>
+            </div>
 
-  return (
-    <div className="space-y-4">
-      {/* Input para la cantidad */}
-      <div className="flex flex-col">
-        <label className="text-gray-600">Cantidad:</label>
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)} // Actualizar cantidad
-          className="p-2 border border-gray-300 rounded"
-          placeholder="Cantidad"
-        />
-      </div>
+            {/* Input para el precio */}
+            <div className="relative">
+                <label className="text-gray-600 mb-1 block">Precio</label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
+                    <FontAwesomeIcon icon={faDollarSign} className="text-gray-500 mx-2" />
+                    <input
+                        type="number"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        className="w-full border-none focus:outline-none"
+                        placeholder="Ingrese el precio"
+                    />
+                </div>
+            </div>
 
-      {/* Input para el precio */}
-      <div className="flex flex-col">
-        <label className="text-gray-600">Precio:</label>
-        <input
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)} // Actualizar precio
-          className="p-2 border border-gray-300 rounded"
-          placeholder="Precio"
-        />
-      </div>
-
-      {/* Botón para enviar la oferta */}
-      <button
-        onClick={handleOffer} // Llamar a la función handleOffer cuando se haga clic
-        className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
-      >
-        Hacer Oferta
-      </button>
-    </div>
-  );
+            {/* Botón para enviar la oferta */}
+            <button
+                onClick={handleOffer}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg flex items-center justify-center hover:bg-blue-700 transition duration-300"
+            >
+                <FontAwesomeIcon icon={faPaperPlane} className="mr-2" />
+                Enviar Oferta
+            </button>
+        </div>
+    );
 };
 
 export default OfferButton;

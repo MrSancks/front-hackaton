@@ -42,7 +42,7 @@ const Login = () => {
 
         switch (userRole) {
           case "administrador":
-            navigate("/admin-dashboard");
+            navigate("/dashboard");
             break;
           case "agricultor":
             navigate("/agricultor-dashboard");

@@ -98,7 +98,7 @@ const ProveedorDashboard = () => {
       {/* Menú de navegación */}
       <div className="relative z-50">
         <div className="flex items-center justify-between px-6 py-4 bg-blue-600 shadow-md">
-          <h1 className="text-xl text-white font-bold">Proveedor Dashboard</h1>
+          <h1 className="text-xl text-white font-bold">Empresa de turística Dashboard</h1>
           <button
             onClick={handleMenuToggle}
             className="text-white md:hidden focus:outline-none"
@@ -176,16 +176,12 @@ const ProveedorDashboard = () => {
 
         {selectedTab === "productos" && (
           <div data-aos="fade-left" className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Registro</h2>
             <CompanyModal />
           </div>
         )}
 
         {selectedTab === 'agricultores' && <Agricultores peasants={peasants} handleOpenModal={handleOpenModal} />}
-
-        {selectedTab === "proveedores" && (
-          <Proveedores suppliers={suppliers} handleOpenModal={handleOpenModal} />
-        )}
+        {selectedTab === "proveedores" && <Proveedores suppliers={suppliers} handleOpenModal={handleOpenModal} />}
 
         {selectedTab === "solicitud" && <RequestCompany supplierId={decodetoken.id} />}
         {selectedTab === "showsol" && <ViewRequest />}

@@ -8,6 +8,7 @@ import 'aos/dist/aos.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import RequestCompany from '../forms/RequestCompany';
 import L from "leaflet";
+import UserInfoDisplay from "../dashboards/Vistas/UserInfoDisplay";
 
 // Configuración del ícono predeterminado de Leaflet
 const DefaultIcon = L.icon({
@@ -25,6 +26,7 @@ AOS.init();
 export const ProveedorModal = () => {
   const token = document.cookie;
   const decodetoken = jwtDecode(token);
+  const decodedToken = jwtDecode(token); // Decodifica el token para obtener el userId
   
   const [formData, setFormData] = useState({
     supplierName: "",
@@ -42,6 +44,7 @@ export const ProveedorModal = () => {
   });
   const [idcampeche, setIdcampeche] = useState(""); 
   const [isProvider, setIsProvider] = useState(false); // Estado para verificar si ya es proveedor
+  const [peasant, setPeasant] = useState({});
   
   useEffect(() => {
     console.log(decodetoken.id)
@@ -60,6 +63,7 @@ export const ProveedorModal = () => {
         );
         
         if (existingProvider) {
+          setPeasant(existingProvider);
           setIsProvider(true);
           setIdcampeche(existingProvider._id);
            // El usuario ya es proveedor
@@ -170,7 +174,7 @@ export const ProveedorModal = () => {
   if (isProvider) {
     return (
       <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6 mb-9">
-        <CrearProducto supplierId={idcampeche} />
+        <UserInfoDisplay role={decodedToken.role} data={peasant}  />
       </div>
     );
   }

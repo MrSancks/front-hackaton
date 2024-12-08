@@ -56,10 +56,6 @@ const ProductsDisplayPeasant = ({ supplier, isOpen, onClose }) => {
                             <strong>Cantidad Producción:</strong> {product.productionQuantity} libras
                           </p>
                       )}
-                      <p className="text-gray-600 mb-2">
-                        <strong>Descripción:</strong>{" "}
-                        {product.description || "No disponible"}
-                      </p>
                       {product.categories && product.categories.length > 0 && (
                           <p className="text-gray-600">
                             <strong>Categorías:</strong> {product.categories.join(", ")}

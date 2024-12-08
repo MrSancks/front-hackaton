@@ -73,7 +73,6 @@ const Empresas = ({ companies, handleOpenModal }) => {
                                     <strong>Dirección:</strong> {company.address}
                                 </p>
                             )}
-                            <h5 className="font-semibold mt-3">Productos Requeridos</h5>
                             {renderContactButtons(company.contact)}
                         </div>
                     ))

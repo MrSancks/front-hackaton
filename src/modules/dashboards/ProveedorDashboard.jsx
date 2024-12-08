@@ -18,11 +18,13 @@ import {
   faTimes,
   faTractor,
   faHotel,
+  faFolder, faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import Proveedores from "./Vistas/Proveedor";
 import Agricultores from './Vistas/Agricultor';
 import ProveedorModal from "../forms/ProveedorModal";
 import Empresas from "./Vistas/Empresas";
+import RequestUser from "../forms/RequestUser";
 
 const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
@@ -128,8 +130,8 @@ const ProveedorDashboard = () => {
                         selectedTab === "productos" ? "font-bold text-blue-600" : ""
                     }`}
                 >
-                  <FontAwesomeIcon icon={faBox} className="mr-2" />
-                  Productos
+                  <FontAwesomeIcon icon={faInfoCircle} className="mr-2" />
+                  Información
                 </li>
                 <li
                     onClick={() => handleMenuSelect("agricultores")}
@@ -137,7 +139,7 @@ const ProveedorDashboard = () => {
                         selectedTab === "agricultores" ? "font-bold text-blue-600" : ""
                     }`}
                 >
-                  <FontAwesomeIcon icon={faTractor} className="mr-2" />
+                  <FontAwesomeIcon icon={faTractor} className="mr-2"/>
                   Agricultores
                 </li>
                 <li
@@ -146,7 +148,7 @@ const ProveedorDashboard = () => {
                         selectedTab === "empresas" ? "font-bold text-blue-600" : ""
                     }`}
                 >
-                  <FontAwesomeIcon icon={faHotel} className="mr-2" />
+                  <FontAwesomeIcon icon={faHotel} className="mr-2"/>
                   Empresas turísticas
                 </li>
                 <li
@@ -155,7 +157,7 @@ const ProveedorDashboard = () => {
                         selectedTab === "solicitud" ? "font-bold text-blue-600" : ""
                     }`}
                 >
-                  <FontAwesomeIcon icon={faClipboardList} className="mr-2" />
+                  <FontAwesomeIcon icon={faClipboardList} className="mr-2"/>
                   Crear Solicitud
                 </li>
                 <li
@@ -164,8 +166,17 @@ const ProveedorDashboard = () => {
                         selectedTab === "showsol" ? "font-bold text-blue-600" : ""
                     }`}
                 >
-                  <FontAwesomeIcon icon={faEye} className="mr-2" />
+                  <FontAwesomeIcon icon={faEye} className="mr-2"/>
                   Ver Solicitudes
+                </li>
+                <li
+                    onClick={() => handleMenuSelect("minesol")}
+                    className={`cursor-pointer p-4 ${
+                        selectedTab === "minesol" ? "font-bold text-blue-600" : ""
+                    }`}
+                >
+                  <FontAwesomeIcon icon={faFolder} className="mr-2"/>
+                  Mis Solicitudes
                 </li>
               </ul>
             </div>
@@ -178,7 +189,7 @@ const ProveedorDashboard = () => {
 
           {selectedTab === "productos" && (
               <div data-aos="fade-left" className="mb-12">
-                <ProveedorModal />
+                <ProveedorModal/>
               </div>
           )}
 
@@ -188,6 +199,7 @@ const ProveedorDashboard = () => {
 
           {selectedTab === "solicitud" && <RequestCompany supplierId={decodetoken.id} />}
           {selectedTab === "showsol" && <ViewRequest />}
+          {selectedTab === "minesol" && <RequestUser />}
         </div>
 
         {/* Modal de productos */}

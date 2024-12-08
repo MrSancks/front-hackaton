@@ -80,7 +80,7 @@ export const UserRequests = () => {
       </h2>
 
       {/* Contenedor con Flexbox */}
-      <div className="flex flex-wrap gap-4">
+      <div className="flex justify-center flex-wrap gap-4">
         {userRequests.map((request) => (
           <div
             key={request._id}
@@ -109,10 +109,6 @@ export const UserRequests = () => {
               </p>
               <p>
                 <strong>Precio:</strong> ${request.product.price}
-              </p>
-              <p>
-                <strong>Descripción:</strong>{" "}
-                {request.description || "Sin descripción"}
               </p>
             </div>
             <button

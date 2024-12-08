@@ -110,10 +110,6 @@ export const UserRequests = () => {
               <p>
                 <strong>Precio:</strong> ${request.product.price}
               </p>
-              <p>
-                <strong>Descripción:</strong>{" "}
-                {request.description || "Sin descripción"}
-              </p>
             </div>
             <button
               onClick={() => openModal(request._id)}

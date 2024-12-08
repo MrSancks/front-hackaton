@@ -181,7 +181,7 @@ const ProveedorDashboard = () => {
           </div>
         )}
 
-        {selectedTab === 'empresas' && <Empresas companies={companies} />}
+        {selectedTab === 'empresas' && <Empresas companies={companies} handleOpenModal={handleOpenModal} />}
 
         {selectedTab === "proveedores" && (
           <Proveedores suppliers={suppliers} handleOpenModal={handleOpenModal} />

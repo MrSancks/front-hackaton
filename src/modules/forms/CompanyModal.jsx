@@ -3,7 +3,21 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import "leaflet/dist/leaflet.css"; // Importar estilos de Leaflet
+import "leaflet/dist/leaflet.css";
+import L from "leaflet"; // Importar estilos de Leaflet
+
+// Configuración del ícono predeterminado de Leaflet
+const DefaultIcon = L.icon({
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  shadowSize: [41, 41],
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
+
 export const CompanyModal = () => {
 
   const token = document.cookie;

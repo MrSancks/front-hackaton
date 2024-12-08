@@ -16,11 +16,12 @@ import {
   faClipboardList,
   faEye,
   faTimes,
-  faTractor,
+  faHotel,
   faTruck,
 } from "@fortawesome/free-solid-svg-icons";
 import Proveedores from "./Vistas/Proveedor";
 import Empresas from './Vistas/Empresas';
+import PeasantModal from "../forms/PeasantModal";
 
 const ProveedorDashboard = () => {
   const [companies, setCompanies] = useState([]);
@@ -98,7 +99,7 @@ const ProveedorDashboard = () => {
       {/* Menú de navegación */}
       <div className="relative z-50">
         <div className="flex items-center justify-between px-6 py-4 bg-blue-600 shadow-md">
-          <h1 className="text-xl text-white font-bold">Proveedor Dashboard</h1>
+          <h1 className="text-xl text-white font-bold">Agricultor Dashboard</h1>
           <button
             onClick={handleMenuToggle}
             className="text-white md:hidden focus:outline-none"
@@ -135,8 +136,8 @@ const ProveedorDashboard = () => {
                   selectedTab === "empresas" ? "font-bold text-blue-600" : ""
                 }`}
               >
-                <FontAwesomeIcon icon={faTractor} className="mr-2" />
-                Empresas
+                <FontAwesomeIcon icon={faHotel} className="mr-2" />
+                Empresas turísticas
               </li>
               <li
                 onClick={() => handleMenuSelect("proveedores")}
@@ -176,16 +177,12 @@ const ProveedorDashboard = () => {
 
         {selectedTab === "productos" && (
           <div data-aos="fade-left" className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Registro</h2>
-            <CompanyModal />
+            <PeasantModal />
           </div>
         )}
 
         {selectedTab === 'empresas' && <Empresas companies={companies} handleOpenModal={handleOpenModal} />}
-
-        {selectedTab === "proveedores" && (
-          <Proveedores suppliers={suppliers} handleOpenModal={handleOpenModal} />
-        )}
+        {selectedTab === "proveedores" && <Proveedores suppliers={suppliers} handleOpenModal={handleOpenModal} />}
 
         {selectedTab === "solicitud" && <RequestCompany supplierId={decodetoken.id} />}
         {selectedTab === "showsol" && <ViewRequest />}

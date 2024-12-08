@@ -4,7 +4,8 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet"; // Importar estilos de Leaflet
+import L from "leaflet";
+import UserInfoDisplay from "../dashboards/Vistas/UserInfoDisplay"; // Importar estilos de Leaflet
 
 // Configuración del ícono predeterminado de Leaflet
 const DefaultIcon = L.icon({
@@ -36,6 +37,7 @@ export const CompanyModal = () => {
 
   const [isCompany, setIsCompany] = useState(false); // Verifica si ya es empresa
   const [companyId, setCompanyId] = useState(""); // Almacena el ID de la empresa si ya existe
+  const [peasant, setPeasant] = useState({});
 
   useEffect(() => {
     // Verificar si el usuario ya tiene una empresa registrada
@@ -53,6 +55,7 @@ export const CompanyModal = () => {
         );
 
         if (existingCompany) {
+          setPeasant(existingCompany);
           setIsCompany(true);
           setCompanyId(existingCompany._id); // Almacena el ID de la empresa existente
         }
@@ -137,18 +140,15 @@ export const CompanyModal = () => {
 
   if (isCompany) {
     return (
-      <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800 text-center">Ya eres una Empresa Registrada</h2>
-        <p className="text-center text-gray-600">
-          Tu empresa ya está registrada en el sistema. ID: {companyId}
-        </p>
-      </div>
+        <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6 mb-9">
+          <UserInfoDisplay role={decodedToken.role} data={peasant}/>
+        </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800 text-center">Registro de Empresa</h2>
+      <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
+        <h2 className="text-2xl font-bold text-gray-800 text-center">Registro de Empresa</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">

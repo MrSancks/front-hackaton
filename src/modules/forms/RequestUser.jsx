@@ -80,7 +80,7 @@ export const UserRequests = () => {
       </h2>
 
       {/* Contenedor con Flexbox */}
-      <div className="flex flex-wrap gap-4">
+      <div className="flex justify-center flex-wrap gap-4">
         {userRequests.map((request) => (
           <div
             key={request._id}

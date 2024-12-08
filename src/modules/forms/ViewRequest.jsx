@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import OfferButton from "./OfferButton";
 import { jwtDecode } from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faEnvelope, faCalendar, faTags, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 export const ViewRequest = () => {
@@ -131,6 +132,7 @@ export const ViewRequest = () => {
               <option value="">Rol</option>
               <option value="agricultor">Agricultor</option>
               <option value="proveedor">Proveedor</option>
+              <option value="empresa turistica">Empresa Turística</option>
             </select>
           </div>
         </div>
@@ -138,51 +140,73 @@ export const ViewRequest = () => {
         {filteredRequests.length === 0 ? (
             <p className="text-center text-gray-600">No hay solicitudes disponibles.</p>
         ) : (
-            filteredRequests.map((request) => (
-                <div key={request._id} className="border-b border-gray-300 py-4 space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-xl font-semibold text-gray-800">{request.product.name}</h3>
-                    <span
-                        className={`text-sm font-medium px-2 py-1 rounded-lg ${
-                            request.status === "activa"
-                                ? "bg-green-200 text-green-600"
-                                : "bg-red-200 text-red-600"
-                        }`}
-                    >
-                {request.status}
-              </span>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-gray-600">
-                      <strong>Tipo de Solicitud:</strong> {request.requestType}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Cantidad:</strong> {request.product.quantity}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Precio:</strong> ${request.product.price}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Descripción:</strong> {request.description || "Sin descripción"}
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center text-gray-600 text-sm">
-              <span>
-                <strong>Solicitante:</strong> {request.user.name} ({request.user.email})
-              </span>
-                    <span>
-                <strong>Fecha de Solicitud:</strong>{" "}
-                      {new Date(request.createdAt).toLocaleString()}
-              </span>
-                  </div>
-                  <button
-                      onClick={() => openModal(request)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-blue-600 transition"
+            <div className="space-y-6">
+              {filteredRequests.map((request) => (
+                  <div
+                      key={request._id}
+                      className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200"
                   >
-                    Hacer Oferta
-                  </button>
-                </div>
-            ))
+                    {/* Header */}
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-bold text-gray-800 flex items-center">
+                        <FontAwesomeIcon icon={faTags} className="mr-2 text-blue-500" />
+                        {request.product.name}
+                      </h3>
+                      <span
+                          className={`text-sm font-medium px-3 py-1 rounded-lg ${
+                              request.status === "activa"
+                                  ? "bg-green-100 text-green-600"
+                                  : "bg-red-100 text-red-600"
+                          }`}
+                      >
+                        {request.status}
+                    </span>
+                    </div>
+
+                    {/* Detalles de la solicitud */}
+                    <div className="space-y-2">
+                      <p className="text-gray-600 flex items-center">
+                        <FontAwesomeIcon icon={faClipboardList} className="mr-2 text-gray-500" />
+                        <strong>Tipo de Solicitud:{" "}</strong> {request.requestType}
+                      </p>
+                      <p className="text-gray-600 flex items-center">
+                        <FontAwesomeIcon icon={faTags} className="mr-2 text-gray-500" />
+                        <strong>Cantidad:{" "}</strong> {request.product.quantity}
+                      </p>
+                      <p className="text-gray-600 flex items-center">
+                        <FontAwesomeIcon icon={faTags} className="mr-2 text-gray-500" />
+                        <strong>Precio:{" "}</strong> ${request.product.price}
+                      </p>
+                    </div>
+
+                    {/* Información del solicitante */}
+                    <div className="flex justify-between items-center text-gray-600 text-sm mt-4">
+                      <div className="flex items-center">
+                        <FontAwesomeIcon icon={faUser} className="mr-2 text-gray-500" />
+                        <span>
+                            <strong>Solicitante:{" "}</strong> {request.user.name} ({request.user.email})
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <FontAwesomeIcon icon={faCalendar} className="mr-2 text-gray-500" />
+                        <span>
+                            <strong>Fecha de Solicitud:{" "}</strong> {new Date(request.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Botón */}
+                    <div className="mt-4 text-right">
+                      <button
+                          onClick={() => openModal(request)}
+                          className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition"
+                      >
+                        Hacer Oferta
+                      </button>
+                    </div>
+                  </div>
+              ))}
+            </div>
         )}
 
         {isModalOpen && selectedRequest && (

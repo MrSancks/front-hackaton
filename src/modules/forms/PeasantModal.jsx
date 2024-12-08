@@ -6,6 +6,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode"; 
 import "leaflet/dist/leaflet.css"; // Importar estilos de Leaflet
 import CrearProducto from "./PeasantProduct";
+import UserInfoDisplay from "../dashboards/Vistas/UserInfoDisplay";
 
 // Configuración del ícono predeterminado de Leaflet
 const DefaultIcon = L.icon({
@@ -37,6 +38,7 @@ export const PeasantModal = () => {
   const [isPeasant, setIsPeasant] = useState(false); // Verifica si ya es un campesino
   const [peasantId, setPeasantId] = useState("");
   const [peasantName, setpeasantName] = useState("");
+  const [peasant, setPeasant] = useState({});
 
   useEffect(() => {
     // Verificar si el usuario ya tiene una finca registrada
@@ -49,11 +51,15 @@ export const PeasantModal = () => {
           withCredentials: true,
         });
 
+
         const existingPeasant = response.data.data.find(
           (peasant) => peasant.user._id === decodedToken.id
         );
 
+        console.log(existingPeasant)
+
         if (existingPeasant) {
+          setPeasant(existingPeasant)
           setIsPeasant(true);
           setPeasantId(existingPeasant._id);
           setpeasantName(existingPeasant.farmName);
@@ -144,7 +150,7 @@ export const PeasantModal = () => {
   if (isPeasant) {
     return (
       <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
-        <CrearProducto supplierId={peasantId} />
+        <UserInfoDisplay role={decodedToken.role} data={peasant}  />
       </div>
     );
   }

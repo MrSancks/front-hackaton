@@ -7,7 +7,19 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import RequestCompany from '../forms/RequestCompany';
+import L from "leaflet";
 
+// Configuración del ícono predeterminado de Leaflet
+const DefaultIcon = L.icon({
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  shadowSize: [41, 41],
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 AOS.init();
 export const ProveedorModal = () => {

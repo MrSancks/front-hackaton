@@ -141,9 +141,9 @@ const ProveedorDashboard = () => {
                   Agricultores
                 </li>
                 <li
-                    onClick={() => handleMenuSelect("proveedores")}
+                    onClick={() => handleMenuSelect("empresas")}
                     className={`cursor-pointer p-4 ${
-                        selectedTab === "proveedores" ? "font-bold text-blue-600" : ""
+                        selectedTab === "empresas" ? "font-bold text-blue-600" : ""
                     }`}
                 >
                   <FontAwesomeIcon icon={faHotel} className="mr-2" />
@@ -182,6 +182,7 @@ const ProveedorDashboard = () => {
               </div>
           )}
 
+          {console.log(companies)}
           {selectedTab === 'agricultores' && <Agricultores peasants={peasants} handleOpenModal={handleOpenModal} />}
           {selectedTab === 'empresas' && <Empresas companies={companies} handleOpenModal={handleOpenModal} />}
 

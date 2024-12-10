@@ -11,7 +11,6 @@ import {
 
 const UserInfoDisplay = ({ role, data }) => {
 
-    console.log(data);
     const renderPeasantInfo = () => (
         <div className="bg-green-100 p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-green-700 mb-4">
@@ -31,6 +30,10 @@ const UserInfoDisplay = ({ role, data }) => {
                 {data.ubication.longitude}
             </p>
             <p>
+                <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+                <strong>Dirección:</strong> {data.address}
+            </p>
+           { /*<p>
                 <FontAwesomeIcon icon={faBoxOpen} className="mr-2" />
                 <strong>Productos:</strong>
             </p>
@@ -42,7 +45,7 @@ const UserInfoDisplay = ({ role, data }) => {
                 </ul>
             ) : (
                 <p>Sin productos registrados.</p>
-            )}
+            )}*/}
         </div>
     );
 
@@ -63,6 +66,10 @@ const UserInfoDisplay = ({ role, data }) => {
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
                 <strong>Ubicación:</strong> Lat: {data.ubication.latitude}, Lng:{" "}
                 {data.ubication.longitude}
+            </p>
+            <p>
+                <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+                <strong>Dirección:</strong> {data.address}
             </p>
             <p>
                 <strong>NIT:</strong> {data.nit}
@@ -89,9 +96,20 @@ const UserInfoDisplay = ({ role, data }) => {
                 {data.ubication.longitude}
             </p>
             <p>
+                <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+                <strong>Dirección:</strong> {data.address}
+            </p>
+            <p>
                 <strong>NIT:</strong> {data.nit}
             </p>
             <p>
+                <strong>Areas Cubiertas:</strong> {data.coverageAreas}
+            </p>
+            <p>
+            <strong>Cuenta Con Transporte:</strong> {data.transportAvailability ? "Sí" : "No"}
+            </p>
+            
+            {/*<p>
                 <FontAwesomeIcon icon={faBoxOpen} className="mr-2" />
                 <strong>Productos Ofrecidos:</strong>
             </p>
@@ -103,7 +121,7 @@ const UserInfoDisplay = ({ role, data }) => {
                 </ul>
             ) : (
                 <p>Sin productos registrados.</p>
-            )}
+            )}*/}
         </div>
     );
 

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import CompanyModal from "../forms/CompanyModal";
 import ProductsDisplayPeasant from "../forms/ProductsDisplayPeasant";
 import { jwtDecode } from "jwt-decode";
 import RequestCompany from "../forms/RequestCompany";
@@ -35,7 +34,8 @@ const ProveedorDashboard = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const token = document.cookie;
-  const decodetoken = jwtDecode(token);
+  const decodedtoken = jwtDecode(token);
+  const [coordinates, setCoordinates] = useState(null);
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -50,7 +50,6 @@ const ProveedorDashboard = () => {
     const fetchData = async () => {
       try {
         const baseURL = "https://hackaton-back-production.up.railway.app";
-
         const companyResponse = await axios.get(`${baseURL}/companies`, {
           headers,
           withCredentials: true,
@@ -68,6 +67,15 @@ const ProveedorDashboard = () => {
           withCredentials: true,
         });
         setPeasants(peasantsResponse.data.data);
+        const decodedToken = jwtDecode(userInfoCookie);
+        const peasantData = peasantsResponse.data.data.find(
+          (peasant) => peasant.user._id === decodedToken.id
+        );
+  
+        if (peasantData && peasantData.ubication) {
+          const { latitude, longitude } = peasantData.ubication;
+          setCoordinates({ latitude, longitude });
+        }
       } catch (err) {
         setError("Error al obtener los datos: " + err.message);
       }
@@ -75,7 +83,8 @@ const ProveedorDashboard = () => {
 
     fetchData();
   }, [navigate]);
-
+  console.log("Coordinates:", coordinates);
+  console.log(peasants)
   const handleOpenModal = (supplier) => {
     setSelectedSupplier(supplier);
     setIsModalOpen(true);
@@ -194,8 +203,8 @@ const ProveedorDashboard = () => {
         {selectedTab === 'empresas' && <Empresas companies={companies} handleOpenModal={handleOpenModal} />}
         {selectedTab === "proveedores" && <Proveedores suppliers={suppliers} handleOpenModal={handleOpenModal} />}
 
-        {selectedTab === "solicitud" && <RequestCompany supplierId={decodetoken.id} />}
-        {selectedTab === "showsol" && <ViewRequest />}
+        {selectedTab === "solicitud" && <RequestCompany supplierId={decodedtoken.id} />}
+        {selectedTab === "showsol" && <ViewRequest latitude={coordinates.latitude} longitude={coordinates.longitude} />}
         {selectedTab === "minesol" && <RequestUser />}
       </div>
 

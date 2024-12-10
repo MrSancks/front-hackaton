@@ -15,6 +15,7 @@ import ProveedorDashboard from "./modules/dashboards/ProveedorDashboard";
 import AgricultorDashboard from "./modules/dashboards/AgricultorDashboard";
 import CompanyDashboard from "./modules/dashboards/CompanyDashboard";
 import ChatWidget from "./modules/ChatWidget";
+import Profile from "./modules/elements/Profile";
 
 const App = () => {
     useEffect(() => {
@@ -90,6 +91,7 @@ const AppRoutes = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/profile" element={<Profile />} />
             </Routes>
             {hasSession && <ChatWidget />}
         </>

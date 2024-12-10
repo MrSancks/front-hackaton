@@ -153,20 +153,30 @@ export const ProveedorModal = () => {
         icon: "success",
         title: "¡Proveedor registrado!",
         text: response.data.message || "Los datos han sido guardados correctamente.",
+        confirmButtonText: "Aceptar",
+      }).then(() => {
+        window.location.reload(); // Recarga la página al cerrar el modal
       });
+  
     } catch (error) {
       if (error.response) {
         Swal.fire({
           icon: "error",
           title: "Error en el registro",
           text: error.response.data.message || "Hubo un problema al guardar los datos.",
-        });
+          confirmButtonText: "Aceptar",
+        }).then(() => {
+          window.location.reload(); // Recarga la página al cerrar el modal
+        });    
       } else {
         Swal.fire({
           icon: "error",
           title: "Error en la conexión",
           text: "No se pudo conectar con el servidor. Por favor, inténtalo más tarde.",
-        });
+          confirmButtonText: "Aceptar",
+        }).then(() => {
+          window.location.reload(); // Recarga la página al cerrar el modal
+        });    
       }
     }
   };

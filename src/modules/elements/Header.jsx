@@ -109,29 +109,37 @@ const Header = () => {
         {/* Botones */}
         <div className="flex space-x-4">
           {hasSession ? (
-              <button
-                  className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300"
-                  onClick={handleLogout}
-              >
-                Logout
-              </button>
-          ) : (
-              <>
-                <button
-                    className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
-                    onClick={() => navigate("/login")}
-                >
-                  Login
-                </button>
-                <button
-                    className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-300"
-                    onClick={() => navigate("/register")}
-                >
-                  Register
-                </button>
-              </>
-          )}
-        </div>
+            <>
+            <button
+              className="px-4 py-2 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-700 transition duration-300"
+              onClick={() => navigate("/profile")}
+            >
+              Mi Perfil
+            </button>
+            <button
+              className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </button>
+            <button
+              className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-300"
+              onClick={() => navigate("/register")}
+            >
+              Register
+            </button>
+          </>
+        )}
+      </div>
       </header>
   );
 };

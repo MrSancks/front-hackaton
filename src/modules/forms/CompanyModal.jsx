@@ -37,7 +37,7 @@ export const CompanyModal = () => {
 
   const [isCompany, setIsCompany] = useState(false); // Verifica si ya es empresa
   const [companyId, setCompanyId] = useState(""); // Almacena el ID de la empresa si ya existe
-  const [peasant, setPeasant] = useState({});
+  const [company, setCompany] = useState({});
 
   useEffect(() => {
     // Verificar si el usuario ya tiene una empresa registrada
@@ -49,13 +49,13 @@ export const CompanyModal = () => {
           },
           withCredentials: true,
         });
-
+        
         const existingCompany = response.data.data.find(
           (company) => company.user._id === decodedToken.id
         );
 
         if (existingCompany) {
-          setPeasant(existingCompany);
+          setCompany(existingCompany);
           setIsCompany(true);
           setCompanyId(existingCompany._id); // Almacena el ID de la empresa existente
         }
@@ -120,20 +120,26 @@ export const CompanyModal = () => {
         icon: "success",
         title: "¡Empresa registrada!",
         text: response.data.message || "Los datos han sido guardados correctamente.",
-      });
+      }).then(() => {
+        window.location.reload(); // Recarga la página al cerrar el modal
+      });  
     } catch (error) {
       if (error.response) {
         Swal.fire({
           icon: "error",
           title: "Error en el registro",
           text: error.response.data.message || "Hubo un problema al guardar los datos.",
-        });
+        }).then(() => {
+          window.location.reload(); // Recarga la página al cerrar el modal
+        });  
       } else {
         Swal.fire({
           icon: "error",
           title: "Error en la conexión",
           text: "No se pudo conectar con el servidor. Por favor, inténtalo más tarde.",
-        });
+        }).then(() => {
+          window.location.reload(); // Recarga la página al cerrar el modal
+        });  
       }
     }
   };
@@ -141,7 +147,7 @@ export const CompanyModal = () => {
   if (isCompany) {
     return (
         <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-6 mb-9">
-          <UserInfoDisplay role={decodedToken.role} data={peasant}/>
+          <UserInfoDisplay role={decodedToken.role} data={company}/>
         </div>
     );
   }

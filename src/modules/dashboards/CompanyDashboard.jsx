@@ -35,7 +35,7 @@ const ProveedorDashboard = () => {
   const navigate = useNavigate();
   const token = document.cookie;
   const decodetoken = jwtDecode(token);
-
+  const [coordinates, setCoordinates] = useState(null);
   useEffect(() => {
     AOS.init({ duration: 1000 });
 
@@ -67,6 +67,15 @@ const ProveedorDashboard = () => {
           withCredentials: true,
         });
         setPeasants(peasantsResponse.data.data);
+        const decodedToken = jwtDecode(userInfoCookie);
+        const peasantData = companyResponse.data.data.find(
+          (peasant) => peasant.user._id === decodedToken.id
+        );
+  
+        if (peasantData && peasantData.ubication) {
+          const { latitude, longitude } = peasantData.ubication;
+          setCoordinates({ latitude, longitude });
+        }
       } catch (err) {
         setError("Error al obtener los datos: " + err.message);
       }
@@ -194,7 +203,7 @@ const ProveedorDashboard = () => {
         {selectedTab === "proveedores" && <Proveedores suppliers={suppliers} handleOpenModal={handleOpenModal} />}
 
         {selectedTab === "solicitud" && <RequestCompany supplierId={decodetoken.id} />}
-        {selectedTab === "showsol" && <ViewRequest />}
+        {selectedTab === "showsol" && <ViewRequest latitude={coordinates.latitude} longitude={coordinates.longitude} />}
         {selectedTab === "minesol" && <RequestUser />}
       </div>
 

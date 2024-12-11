@@ -2,9 +2,11 @@ import React from "react";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons"; // Para WhatsApp
-import { faPhone } from "@fortawesome/free-solid-svg-icons"; // Para llamada
+import { faPhone, faTrash } from "@fortawesome/free-solid-svg-icons"; // Para llamada y borrar
+import axios from "axios";
 
-const Proveedores = ({ suppliers, handleOpenModal }) => {
+const Proveedores = ({ suppliers, handleOpenModal, refreshSuppliers }) => {
+
     const normalizeContact = (contact) => {
         if (!contact) return null;
         const sanitized = contact.replace(/\D+/g, ""); // Quitar todo lo que no sea número
@@ -44,6 +46,25 @@ const Proveedores = ({ suppliers, handleOpenModal }) => {
                 </a>
             </div>
         );
+    };
+    const headers = { "Content-Type": "application/json" };
+    const deleteSupplier = async (supplierId) => {
+        try {
+            const response = await axios.delete(`https://hackaton-back-production.up.railway.app/supplier/${supplierId}`, {
+                headers,
+                withCredentials: true,
+              });
+            if (response.status === 200) {
+                alert("Proveedor eliminado exitosamente.");
+                if (refreshSuppliers) refreshSuppliers();
+                window.location.reload(); // Actualizar la lista si la función es proporcionada
+            } else {
+                alert("Error al eliminar el proveedor.");
+            }
+        } catch (error) {
+            console.error("Error al eliminar proveedor:", error);
+            alert("Hubo un problema al intentar eliminar el proveedor.");
+        }
     };
 
     return (
@@ -85,7 +106,7 @@ const Proveedores = ({ suppliers, handleOpenModal }) => {
                                     <p className="text-gray-500">Sin áreas registradas.</p>
                                 )}
                             </ul>
-                            {supplier.productsOffered?.length > 0 && (
+                            {/*{supplier.productsOffered?.length > 0 && (
                                 <div className="flex justify-center mt-4">
                                     <button
                                         onClick={() => handleOpenModal(supplier)}
@@ -94,8 +115,17 @@ const Proveedores = ({ suppliers, handleOpenModal }) => {
                                         Ver Productos
                                     </button>
                                 </div>
-                            )}
+                            )}*/}
                             {renderContactButtons(supplier.contactPhone)}
+                            <div className="flex justify-center mt-4">
+                                <button
+                                    onClick={() => deleteSupplier(supplier._id)}
+                                    className="flex items-center space-x-2 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition"
+                                >
+                                    <FontAwesomeIcon icon={faTrash} className="text-lg" />
+                                    <span>Eliminar</span>
+                                </button>
+                            </div>
                         </div>
                     ))
                 ) : (

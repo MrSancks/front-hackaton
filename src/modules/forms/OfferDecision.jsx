@@ -7,11 +7,74 @@ import { faCheck, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 const OfferDecision = ({ offerId, requestId, onDecisionMade }) => {
     const [loading, setLoading] = useState(false);
 
+    // Función para manejar la decisión
     const handleDecision = async (status) => {
         try {
             setLoading(true);
 
             const token = document.cookie;
+
+            // Obtener la oferta usando el requestId
+            const offerResponse = await axios.get(
+                `https://hackaton-back-production.up.railway.app/offers/${requestId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            // Obtener el ID del usuario
+            const userId = offerResponse.data.data[0].user._id;
+            const userRole = offerResponse.data.data[0].user.role;
+
+            // Según el rol, hacer la solicitud correspondiente
+            let userResponse;
+
+            if (userRole === "agricultor") {
+                userResponse = await axios.get(
+                    `https://hackaton-back-production.up.railway.app/peasant/user/${userId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                        withCredentials: true,
+                    }
+                );
+            } else if (userRole === "proveedor") {
+                userResponse = await axios.get(
+                    `https://hackaton-back-production.up.railway.app/suppliers/user/${userId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                        withCredentials: true,
+                    }
+                );
+            } else if (userRole === "empresa turistica") {
+                userResponse = await axios.get(
+                    `https://hackaton-back-production.up.railway.app/company/user/${userId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                        withCredentials: true,
+                    }
+                );
+            }
+
+            const userContact = userResponse.data.data.contactPhone;
+
+            // Crear mensaje para WhatsApp
+            const message = `La solicitud ha sido ${status === "aceptada" ? "confirmada" : "rechazada"}.\nPor favor, revisa tu perfil.`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${userContact}?text=${encodedMessage}`;
+
+            // Abrir WhatsApp en una nueva pestaña
+            window.open(whatsappUrl, "_blank");
+
+            // Enviar la decisión al backend
             const response = await axios.put(
                 `https://hackaton-back-production.up.railway.app/offer/${requestId}/${offerId}`,
                 {

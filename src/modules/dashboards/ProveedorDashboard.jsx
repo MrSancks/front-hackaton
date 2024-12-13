@@ -112,7 +112,7 @@ const ProveedorDashboard = () => {
   return (
       <div className="min-h-screen bg-gray-100">
         {/* Menú de navegación */}
-        <div className="relative z-50">
+        <div className="relative z-20">
           <div className="flex items-center px-6 py-4 bg-blue-600 shadow-md relative">
             <h1 className="text-xl text-white font-bold absolute inset-x-0 text-center">
               Proveedor Dashboard

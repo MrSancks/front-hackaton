@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const UserInfoDisplay = ({ role, data }) => {
-
+console.log("ok")
     const renderPeasantInfo = () => (
         <div className="bg-green-100 p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-green-700 mb-4">

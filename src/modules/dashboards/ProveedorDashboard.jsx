@@ -113,8 +113,10 @@ const ProveedorDashboard = () => {
       <div className="min-h-screen bg-gray-100">
         {/* Menú de navegación */}
         <div className="relative z-50">
-          <div className="flex items-center justify-between px-6 py-4 bg-blue-600 shadow-md">
-            <h1 className="text-xl text-white font-bold">Proveedor Dashboard</h1>
+          <div className="flex items-center px-6 py-4 bg-blue-600 shadow-md relative">
+            <h1 className="text-xl text-white font-bold absolute inset-x-0 text-center">
+              Proveedor Dashboard
+            </h1>
             <button
                 onClick={handleMenuToggle}
                 className="text-white md:hidden focus:outline-none"
@@ -126,13 +128,16 @@ const ProveedorDashboard = () => {
             </button>
           </div>
 
-          {/* Opciones del menú */}
-          <nav
-              className={`fixed inset-0 bg-black bg-opacity-50 transform ${
+          {/* Overlay y menú */}
+          {/* onClick en el overlay cierra el menú, nav con stopPropagation */}
+          <div
+              className={`fixed inset-0 backdrop-blur-sm transform ${
                   menuOpen ? "translate-x-0" : "-translate-x-full"
               } transition-transform duration-300 md:static md:bg-transparent md:translate-x-0`}
+              onClick={() => setMenuOpen(false)} // Cerrar al hacer clic en el overlay
           >
-            <div
+            <nav
+                onClick={(e) => e.stopPropagation()} // Evitar que clic dentro del nav cierre el menú
                 className={`bg-white w-64 h-full shadow-lg py-6 md:flex md:items-center md:justify-center md:space-x-6 md:w-auto md:h-auto md:shadow-none`}
             >
               <ul className="space-y-4 md:flex md:space-y-0 md:space-x-6 text-gray-700">
@@ -191,8 +196,8 @@ const ProveedorDashboard = () => {
                   Mis Solicitudes
                 </li>
               </ul>
-            </div>
-          </nav>
+            </nav>
+          </div>
         </div>
 
         {/* Contenido principal */}

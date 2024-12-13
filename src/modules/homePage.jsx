@@ -11,8 +11,8 @@ import {
 
 const HomePage = () => {
   return (
-      <div className="flex flex-col min-h-screen">
-        <main className="flex-1 px-6 py-8 bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="container mx-auto flex items-center flex-col min-h-screen">
+        <main className="flex-1 px-6 py-16">
           {/* Título Principal */}
           <section className="text-center mb-12" data-aos="fade-up">
             <h1 className="text-5xl font-extrabold text-gray-800 mb-6">
@@ -34,8 +34,8 @@ const HomePage = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Beneficio 1 */}
-              <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
-                <div className="bg-green-500 text-white p-4 rounded-full mb-4">
+              <div className="flex flex-col items-center p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div className="bg-green-500 text-white p-4 rounded-full mb-4 inline-block">
                   <FontAwesomeIcon icon={faHandshake} className="h-8 w-8" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
@@ -48,8 +48,8 @@ const HomePage = () => {
               </div>
 
               {/* Beneficio 2 */}
-              <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
-                <div className="bg-green-500 text-white p-4 rounded-full mb-4">
+              <div className="flex flex-col items-center p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div className="bg-green-500 text-white p-4 rounded-full mb-4 inline-block">
                   <FontAwesomeIcon icon={faSeedling} className="h-8 w-8" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
@@ -62,8 +62,8 @@ const HomePage = () => {
               </div>
 
               {/* Beneficio 3 */}
-              <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
-                <div className="bg-green-500 text-white p-4 rounded-full mb-4">
+              <div className="flex flex-col items-center p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div className="bg-green-500 text-white p-4 rounded-full mb-4 inline-block">
                   <FontAwesomeIcon icon={faPiggyBank} className="h-8 w-8" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
@@ -83,8 +83,8 @@ const HomePage = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Testimonio 1 */}
-              <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
-                <div className="bg-blue-500 text-white p-4 rounded-full mb-4">
+              <div className="flex flex-col items-center p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div className="bg-blue-500 text-white p-4 rounded-full mb-4 inline-block">
                   <FontAwesomeIcon icon={faUsers} className="h-8 w-8" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
@@ -96,8 +96,8 @@ const HomePage = () => {
               </div>
 
               {/* Testimonio 2 */}
-              <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
-                <div className="bg-blue-500 text-white p-4 rounded-full mb-4">
+              <div className="flex flex-col items-center p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div className="bg-blue-500 text-white p-4 rounded-full mb-4 inline-block">
                   <FontAwesomeIcon icon={faChartLine} className="h-8 w-8" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
@@ -109,8 +109,8 @@ const HomePage = () => {
               </div>
 
               {/* Testimonio 3 */}
-              <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
-                <div className="bg-blue-500 text-white p-4 rounded-full mb-4">
+              <div className="flex flex-col items-center p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div className="bg-blue-500 text-white p-4 rounded-full mb-4 inline-block">
                   <FontAwesomeIcon icon={faComments} className="h-8 w-8" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-800 mb-2">

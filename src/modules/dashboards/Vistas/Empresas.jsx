@@ -2,10 +2,10 @@ import React from 'react';
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'; // Para WhatsApp
-import { faPhone,faTrash } from '@fortawesome/free-solid-svg-icons'; // Para llamada
+import { faPhone, faTrash, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons'; // Para llamada
 import axios from "axios";
 
-const Empresas = ({ companies, handleOpenModal,refreshSuppliers }) => {
+const Empresas = ({ companies, handleOpenModal, refreshCompanies }) => {
     const normalizeContact = (contact) => {
         if (!contact) return null;
         const sanitized = contact.replace(/\D+/g, ""); // Quitar todo lo que no sea número
@@ -45,29 +45,33 @@ const Empresas = ({ companies, handleOpenModal,refreshSuppliers }) => {
             </div>
         );
     };
-    const headers = { "Content-Type": "application/json" };
-    const deleteSupplier = async (supplierId) => {
+
+    const deleteCompany = async (companyId) => {
         try {
-            const response = await axios.delete(`https://hackaton-back-production.up.railway.app/company/${supplierId}`, {
-                headers,
-                withCredentials: true,
-              });
+            const response = await axios.delete(
+                `https://hackaton-back-production.up.railway.app/company/${companyId}`,
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                }
+            );
+
             if (response.status === 200) {
-                alert("Proveedor eliminado exitosamente.");
-                if (refreshSuppliers) refreshSuppliers();
-                window.location.reload(); // Actualizar la lista si la función es proporcionada
+                alert("Empresa eliminada exitosamente.");
+                if (refreshCompanies) refreshCompanies();
+                window.location.reload();
             } else {
-                alert("Error al eliminar el proveedor.");
+                alert("Error al eliminar la empresa.");
             }
         } catch (error) {
-            console.error("Error al eliminar proveedor:", error);
-            alert("Hubo un problema al intentar eliminar el proveedor.");
+            console.error("Error al eliminar empresa:", error);
+            alert("Hubo un problema al intentar eliminar la empresa.");
         }
     };
 
     return (
         <div data-aos="fade-left" className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Asociadas</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Empresas Turísticas</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {companies.length > 0 ? (
                     companies.map((company, index) => (
@@ -79,7 +83,9 @@ const Empresas = ({ companies, handleOpenModal,refreshSuppliers }) => {
                         >
                             <div className="flex items-center mb-4">
                                 <BuildingOffice2Icon className="h-8 w-8 text-gray-600 mr-2" />
-                                <h3 className="text-lg font-semibold text-blue-600">{company.companyName}</h3>
+                                <h3 className="text-lg font-semibold text-blue-600">
+                                    {company.companyName}
+                                </h3>
                             </div>
                             <p>
                                 <strong>NIT:</strong> {company.nit}
@@ -87,15 +93,27 @@ const Empresas = ({ companies, handleOpenModal,refreshSuppliers }) => {
                             <p>
                                 <strong>Contacto:</strong> {company.contact}
                             </p>
-                            {company.address && (
-                                <p>
-                                    <strong>Dirección:</strong> {company.address}
-                                </p>
-                            )}
+                            <p>
+                                <strong>Dirección:</strong> {company.address || "No disponible"}
+                            </p>
+                            <p>
+                                <strong>Ubicación:</strong>
+                                <FontAwesomeIcon icon={faMapMarkerAlt} className="ml-2" />
+                                Lat: {company.ubication.latitude.toFixed(3)},
+                                Lng: {company.ubication.longitude.toFixed(3)}
+                            </p>
+                            <p>
+                                <strong>Usuario Asociado:</strong>
+                                {company.user?.name || "Información no disponible"}
+                            </p>
+                            <p>
+                                <strong>Correo:</strong>
+                                {company.user?.email || "Información no disponible"}
+                            </p>
                             {renderContactButtons(company.contact)}
                             <div className="flex justify-center mt-4">
                                 <button
-                                    onClick={() => deleteSupplier(company._id)}
+                                    onClick={() => deleteCompany(company._id)}
                                     className="flex items-center space-x-2 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition"
                                 >
                                     <FontAwesomeIcon icon={faTrash} className="text-lg" />

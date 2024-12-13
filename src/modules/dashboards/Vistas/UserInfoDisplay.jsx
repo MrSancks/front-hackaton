@@ -33,19 +33,10 @@ const UserInfoDisplay = ({ role, data }) => {
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
                 <strong>Dirección:</strong> {data.address}
             </p>
-           { /*<p>
+            <p>
                 <FontAwesomeIcon icon={faBoxOpen} className="mr-2" />
                 <strong>Productos:</strong>
             </p>
-            {data.products?.length > 0 ? (
-                <ul className="list-disc ml-6">
-                    {data.products.map((product, index) => (
-                        <li key={index}>{product.name}</li>
-                    ))}
-                </ul>
-            ) : (
-                <p>Sin productos registrados.</p>
-            )}*/}
         </div>
     );
 
@@ -108,20 +99,6 @@ const UserInfoDisplay = ({ role, data }) => {
             <p>
             <strong>Cuenta Con Transporte:</strong> {data.transportAvailability ? "Sí" : "No"}
             </p>
-            
-            {/*<p>
-                <FontAwesomeIcon icon={faBoxOpen} className="mr-2" />
-                <strong>Productos Ofrecidos:</strong>
-            </p>
-            {data.productsOffered?.length > 0 ? (
-                <ul className="list-disc ml-6">
-                    {data.productsOffered.map((product, index) => (
-                        <li key={index}>{product.name} - {product.quantity} unidades</li>
-                    ))}
-                </ul>
-            ) : (
-                <p>Sin productos registrados.</p>
-            )}*/}
         </div>
     );
 

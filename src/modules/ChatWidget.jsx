@@ -62,7 +62,14 @@ const ChatWidget = () => {
                 }
             );
 
-            const botMessage = { role: "bot", content: response.data.response.content };
+            let botResponseContent = response.data.response.content;
+
+            // Eliminar corchetes al inicio y al final si están presentes
+            if (botResponseContent.startsWith("[") && botResponseContent.endsWith("]")) {
+                botResponseContent = botResponseContent.slice(1, -1).trim();
+            }
+
+            const botMessage = { role: "bot", content: botResponseContent };
             setMessages((prev) => [...prev, botMessage]);
         } catch (error) {
             console.error("Error al enviar el mensaje:", error);

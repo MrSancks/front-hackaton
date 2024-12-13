@@ -54,7 +54,10 @@ const Register = () => {
   return (
       <div
           className="relative w-full h-screen bg-cover bg-center"
-          style={{ backgroundImage: `url(${backgroundImage})` }}
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            height: "calc(100vh - 8.3rem)" // Ajusta 8rem según la altura real de tu header+footer
+          }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <div className="absolute inset-0 flex justify-center items-center p-4">

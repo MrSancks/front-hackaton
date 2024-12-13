@@ -6,7 +6,6 @@ import { faPhone, faTrash } from "@fortawesome/free-solid-svg-icons"; // Para ll
 import axios from "axios";
 
 const Proveedores = ({ suppliers, handleOpenModal, refreshSuppliers }) => {
-
     const normalizeContact = (contact) => {
         if (!contact) return null;
         const sanitized = contact.replace(/\D+/g, ""); // Quitar todo lo que no sea número
@@ -47,13 +46,16 @@ const Proveedores = ({ suppliers, handleOpenModal, refreshSuppliers }) => {
             </div>
         );
     };
-    const headers = { "Content-Type": "application/json" };
+
     const deleteSupplier = async (supplierId) => {
         try {
-            const response = await axios.delete(`https://hackaton-back-production.up.railway.app/supplier/${supplierId}`, {
-                headers,
-                withCredentials: true,
-              });
+            const response = await axios.delete(
+                `https://hackaton-back-production.up.railway.app/supplier/${supplierId}`,
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                }
+            );
             if (response.status === 200) {
                 alert("Proveedor eliminado exitosamente.");
                 if (refreshSuppliers) refreshSuppliers();
@@ -80,8 +82,10 @@ const Proveedores = ({ suppliers, handleOpenModal, refreshSuppliers }) => {
                             data-aos-delay={index * 100} // Retardo para escalonar la aparición
                         >
                             <div className="flex items-center mb-4">
-                                <ShoppingBagIcon className="h-8 w-8 text-orange-600 mr-2" />
-                                <h3 className="text-lg font-semibold text-orange-600">{supplier.supplierName}</h3>
+                                <ShoppingBagIcon className="h-8 w-8 text-orange-600 mr-2"/>
+                                <h3 className="text-lg font-semibold text-orange-600">
+                                    {supplier.supplierName}
+                                </h3>
                             </div>
                             <p>
                                 <strong>NIT:</strong> {supplier.nit}
@@ -91,6 +95,14 @@ const Proveedores = ({ suppliers, handleOpenModal, refreshSuppliers }) => {
                             </p>
                             <p>
                                 <strong>Dirección:</strong> {supplier.address || "No disponible"}
+                            </p>
+                            <p>
+                                <strong>Usuario Asociado:</strong>{" "}
+                                {supplier.user?.name || "Información no disponible"}
+                            </p>
+                            <p>
+                                <strong>Correo:</strong>{" "}
+                                {supplier.user?.email || "Información no disponible"}
                             </p>
                             <p>
                                 <strong>Transportes Disponibles:</strong>{" "}
@@ -106,23 +118,23 @@ const Proveedores = ({ suppliers, handleOpenModal, refreshSuppliers }) => {
                                     <p className="text-gray-500">Sin áreas registradas.</p>
                                 )}
                             </ul>
-                            {/*{supplier.productsOffered?.length > 0 && (
+                            {supplier.productsOffered?.length > 0 && (
                                 <div className="flex justify-center mt-4">
                                     <button
                                         onClick={() => handleOpenModal(supplier)}
-                                        className="mt-4 px-4 py-2 text-center bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
+                                        className="px-4 py-2 text-center bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
                                     >
                                         Ver Productos
                                     </button>
                                 </div>
-                            )}*/}
+                            )}
                             {renderContactButtons(supplier.contactPhone)}
                             <div className="flex justify-center mt-4">
                                 <button
                                     onClick={() => deleteSupplier(supplier._id)}
                                     className="flex items-center space-x-2 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition"
                                 >
-                                    <FontAwesomeIcon icon={faTrash} className="text-lg" />
+                                    <FontAwesomeIcon icon={faTrash} className="text-lg"/>
                                     <span>Eliminar</span>
                                 </button>
                             </div>
